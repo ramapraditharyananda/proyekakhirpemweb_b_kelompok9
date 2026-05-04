@@ -898,3 +898,85 @@ body.body-admin {
 }
 
 .user-footer strong { color: var(--gold); }
+
+.prd-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.prd-form-full { grid-column: 1 / -1; }
+
+.prd-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-mid); margin-bottom: 6px; }
+
+.prd-input, .prd-select, .prd-textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #e4e2f4;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-dark);
+  background: #f8f7fd;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.prd-input:focus, .prd-select:focus, .prd-textarea:focus {
+  border-color: var(--purple);
+  background: var(--white);
+}
+
+.prd-textarea { resize: vertical; min-height: 96px; }
+
+.prd-upload-area {
+  border: 2px dashed #c9c6e8;
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
+  background: #f8f7fd;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.prd-upload-area:hover { border-color: var(--purple); background: #f0eef8; }
+.prd-upload-icon { font-size: 32px; margin-bottom: 7px; }
+.prd-upload-text { font-size: 13px; color: var(--text-light); }
+.prd-upload-text strong { color: var(--purple); }
+
+.prd-form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+.prd-btn-cancel {
+  padding: 11px 24px;
+  border: 2px solid #e4e2f4;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-light);
+  font-family: inherit;
+  font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.prd-btn-cancel:hover { border-color: var(--purple); color: var(--purple); }
+
+.prd-btn-submit {
+  padding: 11px 28px;
+  background: var(--purple);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 13.5px; font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.prd-btn-submit:hover { background: #3730a3; }
+
+.prd-notice {
+  background: #fef3cd;
+  border-left: 4px solid var(--gold);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 13px;
+  color: #7a5800;
+  margin-bottom: 18px;
+}
+
+.err-msg { color: #c0392b; font-size: 12px; margin-top: 4px; display: none; }
