@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Produk - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-pemilik.html" class="adm-nav-link">Dashboard</a>
+        <a href="tambah-produk.html" class="adm-nav-link active">Tambah Produk</a>
+      </nav>
+      <a href="login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main">
+      <header class="adm-header">
+        <h2>Tambah Produk Baru</h2>
+        <p>Isi detail produk untuk diajukan ke admin.</p>
+      </header>
+      <div class="prd-notice">
+        ⚠️ Produk yang Anda tambahkan akan ditinjau oleh admin terlebih dahulu sebelum ditampilkan ke pengunjung.
+      </div>
+      <div class="adm-form-card">
+        <div id="formTambahProduk">
+          <div class="prd-form-grid">
+            <div class="prd-form-full">
+              <label class="prd-label">Foto Produk</label>
+              <div class="prd-upload-area" onclick="document.getElementById('fotoInput').click()">
+                <div class="prd-upload-icon">📷</div>
+                <div class="prd-upload-text"><strong>Klik untuk unggah</strong> atau seret file ke sini</div>
+                <div class="prd-upload-text" style="margin-top:4px;">PNG, JPG, WEBP — maks. 5 MB</div>
+              </div>
+              <input type="file" id="fotoInput" accept="image/*" style="display:none;" onchange="previewGambar(this)">
+              <div id="previewWrap" style="display:none;margin-top:12px;">
+                <img id="previewImg" style="max-height:160px;border-radius:12px;border:2px solid #e4e2f4;" alt="Preview">
+              </div>
+            </div>
+            <div>
+              <label class="prd-label" for="namaProduk">Nama Produk <span style="color:#e74c3c;">*</span></label>
+              <input type="text" id="namaProduk" class="prd-input" placeholder="Contoh: Dodol Durian Khas Lampung">
+              <div class="err-msg" id="errNama">Nama produk wajib diisi.</div>
+            </div>
+            <div>
+              <label class="prd-label" for="kategori">Kategori <span style="color:#e74c3c;">*</span></label>
+              <select id="kategori" class="prd-select">
+                <option value="">-- Pilih Kategori --</option>
+                <option>Makanan</option>
+                <option>Minuman</option>
+                <option>Fashion & Kain Tapis</option>
+                <option>Kerajinan Tangan</option>
+                <option>Pertanian & Rempah</option>
+              </select>
+              <div class="err-msg" id="errKategori">Pilih kategori produk.</div>
+            </div>
+            <div>
+              <label class="prd-label" for="harga">Harga (Rp) <span style="color:#e74c3c;">*</span></label>
+              <input type="number" id="harga" class="prd-input" placeholder="Contoh: 35000" min="0">
+              <div class="err-msg" id="errHarga">Harga wajib diisi dan tidak boleh negatif.</div>
+            </div>
+            <div>
+              <label class="prd-label" for="stok">Status Ketersediaan</label>
+              <select id="stok" class="prd-select">
+                <option value="tersedia">Tersedia</option>
+                <option value="habis">Stok Habis</option>
+              </select>
+            </div>
+            <div class="prd-form-full">
+              <label class="prd-label" for="deskripsi">Deskripsi Produk <span style="color:#e74c3c;">*</span></label>
+              <textarea id="deskripsi" class="prd-textarea" placeholder="Jelaskan produk Anda secara singkat dan menarik..."></textarea>
+              <div class="err-msg" id="errDeskripsi">Deskripsi produk wajib diisi.</div>
+            </div>
+          </div>
+          <div class="prd-form-actions">
+            <button type="button" class="prd-btn-cancel" onclick="history.back()">Batal</button>
+            <button type="button" class="prd-btn-submit" onclick="submitForm()">Ajukan Produk →</button>
+          </div>
+        </div>
+      </div>
+      <footer class="adm-footer">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

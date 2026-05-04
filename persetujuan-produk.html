@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persetujuan Produk - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-admin.html" class="adm-nav-link">Dashboard</a>
+        <a href="persetujuan-produk.html" class="adm-nav-link active">Persetujuan Produk</a>
+        <a href="daftar-produk.html" class="adm-nav-link">Daftar Produk</a>
+        <a href="daftar-umkm.html" class="adm-nav-link">Daftar UMKM</a>
+        <a href="daftar-pengguna.html" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+      </nav>
+      <a href="login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main">
+      <header class="adm-header">
+        <h2>Persetujuan Produk</h2>
+        <p>Tinjau dan setujui produk dari pemilik UMKM.</p>
+      </header>
+      <div class="adm-toolbar">
+        <div class="adm-search-wrap">
+          <input type="text" class="adm-search" placeholder="Cari nama produk atau UMKM...">
+        </div>
+        <select class="adm-filter">
+          <option value="">Semua Kategori</option>
+          <option>Makanan</option>
+          <option>Minuman</option>
+          <option>Fashion & Kain Tapis</option>
+          <option>Kerajinan Tangan</option>
+          <option>Pertanian & Rempah</option>
+        </select>
+        <select class="adm-filter">
+          <option value="">Semua Status</option>
+          <option>Pending</option>
+          <option>Disetujui</option>
+          <option>Ditolak</option>
+        </select>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Produk</th>
+              <th>Pemilik UMKM</th>
+              <th>Kategori</th>
+              <th>Dikirim</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="adm-prod-cell">
+                  <img src="images/keripik-pisang.jpg" class="adm-prod-img" alt="Keripik Pisang">
+                  <div><div class="adm-prod-name">Keripik Pisang Tanduk</div><div class="adm-prod-sub">Rp 25.000</div></div>
+                </div>
+              </td>
+              <td>Warung Bu Sari</td>
+              <td>Makanan</td>
+              <td>2 jam lalu</td>
+              <td><span class="adm-pill adm-pill-pending">Pending</span></td>
+              <td>
+                <div class="adm-act-btns">
+                  <button class="adm-btn-acc" onclick="setStatus(this,'acc')">Setujui</button>
+                  <button class="adm-btn-tolak" onclick="setStatus(this,'tolak')">Tolak</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="adm-prod-cell">
+                  <img src="images/kopi.jpg" class="adm-prod-img" alt="Kopi">
+                  <div><div class="adm-prod-name">Kopi Robusta Lampung</div><div class="adm-prod-sub">Rp 45.000</div></div>
+                </div>
+              </td>
+              <td>Kedai Pak Hendra</td>
+              <td>Pertanian & Rempah</td>
+              <td>5 jam lalu</td>
+              <td><span class="adm-pill adm-pill-pending">Pending</span></td>
+              <td>
+                <div class="adm-act-btns">
+                  <button class="adm-btn-acc" onclick="setStatus(this,'acc')">Setujui</button>
+                  <button class="adm-btn-tolak" onclick="setStatus(this,'tolak')">Tolak</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="adm-prod-cell">
+                  <img src="images/kemeja.jpeg" class="adm-prod-img" alt="Kemeja">
+                  <div><div class="adm-prod-name">Kemeja Tapis Lampung</div><div class="adm-prod-sub">Rp 350.000</div></div>
+                </div>
+              </td>
+              <td>Tenun Mbok Inah</td>
+              <td>Fashion & Kain Tapis</td>
+              <td>1 hari lalu</td>
+              <td><span class="adm-pill adm-pill-pending">Pending</span></td>
+              <td>
+                <div class="adm-act-btns">
+                  <button class="adm-btn-acc" onclick="setStatus(this,'acc')">Setujui</button>
+                  <button class="adm-btn-tolak" onclick="setStatus(this,'tolak')">Tolak</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="adm-prod-cell">
+                  <img src="images/tas.jpeg" class="adm-prod-img" alt="Tas">
+                  <div><div class="adm-prod-name">Tas Tenun Tapis</div><div class="adm-prod-sub">Rp 120.000</div></div>
+                </div>
+              </td>
+              <td>Kerajinan Pak Budi</td>
+              <td>Kerajinan Tangan</td>
+              <td>2 hari lalu</td>
+              <td><span class="adm-pill adm-pill-acc">Disetujui</span></td>
+              <td><span style="color:var(--text-light);font-size:13px;">—</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="adm-prod-cell">
+                  <img src="images/milk-tea.jpeg" class="adm-prod-img" alt="Milk Tea">
+                  <div><div class="adm-prod-name">Milk Tea Almond</div><div class="adm-prod-sub">Rp 22.000</div></div>
+                </div>
+              </td>
+              <td>Minuman Segar Unila</td>
+              <td>Minuman</td>
+              <td>3 hari lalu</td>
+              <td><span class="adm-pill adm-pill-tolak">Ditolak</span></td>
+              <td><span style="color:var(--text-light);font-size:13px;">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="adm-footer">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
