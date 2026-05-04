@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Pengguna - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-admin.html" class="adm-nav-link">Dashboard</a>
+        <a href="persetujuan-produk.html" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="daftar-produk.html" class="adm-nav-link">Daftar Produk</a>
+        <a href="daftar-umkm.html" class="adm-nav-link">Daftar UMKM</a>
+        <a href="daftar-pengguna.html" class="adm-nav-link active">Daftar Pengguna</a>
+        <a href="pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+      </nav>
+      <a href="login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main">
+      <header class="adm-header">
+        <h2>Daftar Pengguna</h2>
+        <p>Kelola akun seluruh pengguna sistem.</p>
+      </header>
+      <div class="adm-toolbar">
+        <div class="adm-search-wrap">
+          <input type="text" class="adm-search" placeholder="Cari nama atau email...">
+        </div>
+        <select class="adm-filter">
+          <option value="">Semua Role</option>
+          <option>Admin</option>
+          <option>Pemilik UMKM</option>
+          <option>Pengunjung</option>
+        </select>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Terdaftar</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Admin</strong></td>
+              <td>admin@umkmify.id</td>
+              <td><span class="adm-pill" style="background:#eeedf8;color:var(--purple);">Admin</span></td>
+              <td>01 Jan 2026</td>
+              <td><span style="color:var(--text-light);font-size:13px;">—</span></td>
+            </tr>
+            <tr>
+              <td><strong>Sari Wahyuni</strong></td>
+              <td>sari@gmail.com</td>
+              <td><span class="adm-pill adm-pill-acc">Pemilik UMKM</span></td>
+              <td>10 Feb 2026</td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Edit</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>Hendra Saputra</strong></td>
+              <td>hendra@gmail.com</td>
+              <td><span class="adm-pill adm-pill-acc">Pemilik UMKM</span></td>
+              <td>14 Feb 2026</td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Edit</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>Budi Santoso</strong></td>
+              <td>budi@gmail.com</td>
+              <td><span class="adm-pill adm-pill-acc">Pemilik UMKM</span></td>
+              <td>20 Feb 2026</td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Edit</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>Andi Kurniawan</strong></td>
+              <td>andi@gmail.com</td>
+              <td><span class="adm-pill adm-pill-pending">Pengunjung</span></td>
+              <td>01 Mar 2026</td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Edit</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="adm-footer">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
