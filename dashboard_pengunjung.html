@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog UMKM - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="nav-logo-text">UMKM<span>ify</span></span>
+    <div class="nav-links">
+      <a href="dashboard_pengunjung.html" class="active">Beranda</a>
+      <a href="#produk">Produk</a>
+      <a href="#umkm">UMKM</a>
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar">A</div>
+      <span>Andi</span>
+      <a href="login.html" style="font-size:12px;color:var(--text-light);margin-left:8px;text-decoration:none;">Keluar</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Temukan Produk <span>UMKM Lokal</span> Lampung</h1>
+    <p>Dukung pelaku usaha lokal dengan membeli produk unggulan dari Lampung.</p>
+    <div class="hero-search">
+      <input type="text" id="searchInput" placeholder="Cari produk, nama toko..." oninput="filterProduk()">
+      <button onclick="filterProduk()">Cari</button>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="filter-bar">
+      <button class="filter-chip active" onclick="setFilter(this,'')">Semua</button>
+      <button class="filter-chip" onclick="setFilter(this,'Makanan')">🍱 Makanan</button>
+      <button class="filter-chip" onclick="setFilter(this,'Minuman')">🥤 Minuman</button>
+      <button class="filter-chip" onclick="setFilter(this,'Fashion')">👗 Fashion & Tapis</button>
+      <button class="filter-chip" onclick="setFilter(this,'Kerajinan')">🧺 Kerajinan</button>
+      <button class="filter-chip" onclick="setFilter(this,'Pertanian')">🌾 Pertanian</button>
+    </div>
+
+    <div id="produk" class="produk-grid">
+      <div class="produk-card" data-kategori="Makanan" data-nama="Dodol Durian" data-toko="Warung Bu Sari">
+        <div class="produk-img-wrap">
+          <img src="images/dodol.jpeg" alt="Dodol Durian">
+          <span class="produk-cat-badge">Makanan</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Warung Bu Sari</div>
+          <div class="produk-nama">Dodol Durian</div>
+          <div class="produk-desc">Dodol khas Lampung dengan cita rasa manis legit, oleh-oleh favorit.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 35.000</span>
+            <a href="https://wa.me/6281234567890" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Makanan" data-nama="Keripik Pisang Tanduk" data-toko="Warung Bu Sari">
+        <div class="produk-img-wrap">
+          <img src="images/keripik-pisang.jpg" alt="Keripik Pisang">
+          <span class="produk-cat-badge">Makanan</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Warung Bu Sari</div>
+          <div class="produk-nama">Keripik Pisang Tanduk</div>
+          <div class="produk-desc">Renyah dan gurih, tersedia berbagai rasa pilihan.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 25.000</span>
+            <a href="https://wa.me/6281234567890" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Makanan" data-nama="Sambal Lampung" data-toko="Dapur Ibu Rina">
+        <div class="produk-img-wrap">
+          <img src="images/sambal.jpg" alt="Sambal Lampung">
+          <span class="produk-cat-badge">Makanan</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Dapur Ibu Rina</div>
+          <div class="produk-nama">Sambal Lampung</div>
+          <div class="produk-desc">Pedas gurih alami, tanpa pengawet, cocok untuk semua masakan.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 20.000</span>
+            <a href="https://wa.me/6281234567891" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Minuman" data-nama="Milk Tea Almond" data-toko="Minuman Segar Unila">
+        <div class="produk-img-wrap">
+          <img src="images/milk-tea.jpeg" alt="Milk Tea">
+          <span class="produk-cat-badge">Minuman</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Minuman Segar Unila</div>
+          <div class="produk-nama">Milk Tea Almond</div>
+          <div class="produk-desc">Creamy dan segar, tanpa gula tambahan, bahan berkualitas.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 22.000</span>
+            <a href="https://wa.me/6281234567892" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Fashion" data-nama="Kemeja Tapis Lampung" data-toko="Tenun Mbok Inah">
+        <div class="produk-img-wrap">
+          <img src="images/kemeja.jpeg" alt="Kemeja Tapis">
+          <span class="produk-cat-badge">Fashion</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Tenun Mbok Inah</div>
+          <div class="produk-nama">Kemeja Tapis Lampung</div>
+          <div class="produk-desc">Kemeja premium dengan motif tenun tapis tradisional Lampung.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 350.000</span>
+            <a href="https://wa.me/6281234567893" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Fashion" data-nama="Kain Tapis Tradisional" data-toko="Tenun Mbok Inah">
+        <div class="produk-img-wrap">
+          <img src="images/tapis.jpg" alt="Kain Tapis">
+          <span class="produk-cat-badge">Fashion</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Tenun Mbok Inah</div>
+          <div class="produk-nama">Kain Tapis Tradisional</div>
+          <div class="produk-desc">Motif khas Lampung, handmade, cocok untuk acara adat & formal.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 500.000</span>
+            <a href="https://wa.me/6281234567893" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Kerajinan" data-nama="Tas Tenun Tapis" data-toko="Kerajinan Pak Budi">
+        <div class="produk-img-wrap">
+          <img src="images/tas.jpeg" alt="Tas Anyam">
+          <span class="produk-cat-badge">Kerajinan</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Kerajinan Pak Budi</div>
+          <div class="produk-nama">Tas Tenun Tapis</div>
+          <div class="produk-desc">Tas elegan berbahan tapis, kuat dan unik sebagai oleh-oleh.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 120.000</span>
+            <a href="https://wa.me/6281234567894" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div class="produk-card" data-kategori="Pertanian" data-nama="Kopi Robusta Lampung" data-toko="Kedai Pak Hendra">
+        <div class="produk-img-wrap">
+          <img src="images/kopi.jpg" alt="Kopi Robusta">
+          <span class="produk-cat-badge">Pertanian</span>
+        </div>
+        <div class="produk-body">
+          <div class="produk-toko">🏪 Kedai Pak Hendra</div>
+          <div class="produk-nama">Kopi Robusta Lampung</div>
+          <div class="produk-desc">Biji kopi pilihan, aroma kuat dan khas dari dataran Lampung.</div>
+          <div class="produk-footer">
+            <span class="produk-harga">Rp 45.000</span>
+            <a href="https://wa.me/6281234567895" class="produk-wa" target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="umkm">UMKM Terdaftar</h2>
+    <div class="umkm-grid">
+      <div class="umkm-card"><div class="umkm-icon">🍱</div><div><div class="umkm-name">Warung Bu Sari</div><div class="umkm-cat">Makanan & Camilan</div><div class="umkm-count">4 produk tayang</div></div></div>
+      <div class="umkm-card"><div class="umkm-icon">🍳</div><div><div class="umkm-name">Dapur Ibu Rina</div><div class="umkm-cat">Makanan</div><div class="umkm-count">2 produk tayang</div></div></div>
+      <div class="umkm-card"><div class="umkm-icon">🥤</div><div><div class="umkm-name">Minuman Segar Unila</div><div class="umkm-cat">Minuman</div><div class="umkm-count">3 produk tayang</div></div></div>
+      <div class="umkm-card"><div class="umkm-icon">👘</div><div><div class="umkm-name">Tenun Mbok Inah</div><div class="umkm-cat">Fashion & Kain Tapis</div><div class="umkm-count">5 produk tayang</div></div></div>
+      <div class="umkm-card"><div class="umkm-icon">🧺</div><div><div class="umkm-name">Kerajinan Pak Budi</div><div class="umkm-cat">Kerajinan Tangan</div><div class="umkm-count">3 produk tayang</div></div></div>
+      <div class="umkm-card"><div class="umkm-icon">☕</div><div><div class="umkm-name">Kedai Pak Hendra</div><div class="umkm-cat">Pertanian & Rempah</div><div class="umkm-count">2 produk tayang</div></div></div>
+    </div>
+  </div>
+
+  <footer class="user-footer">
+    <p>© 2026 <strong>UMKMify</strong>. Platform Digital UMKM Lokal Lampung. Dukung produk lokal, bangun ekonomi daerah.</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
