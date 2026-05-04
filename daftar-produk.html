@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Produk - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-admin.html" class="adm-nav-link">Dashboard</a>
+        <a href="persetujuan-produk.html" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="daftar-produk.html" class="adm-nav-link active">Daftar Produk</a>
+        <a href="daftar-umkm.html" class="adm-nav-link">Daftar UMKM</a>
+        <a href="daftar-pengguna.html" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+      </nav>
+      <a href="login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main">
+      <header class="adm-header">
+        <h2>Daftar Produk</h2>
+        <p>Semua produk yang telah tayang di platform UMKMify.</p>
+      </header>
+      <div class="adm-toolbar">
+        <div class="adm-search-wrap">
+          <input type="text" class="adm-search" id="searchProduk" placeholder="Cari nama produk atau UMKM..." oninput="filterTabelProduk()">
+        </div>
+        <select class="adm-filter" id="filterKategori" onchange="filterTabelProduk()">
+          <option value="">Semua Kategori</option>
+          <option>Makanan</option>
+          <option>Minuman</option>
+          <option>Fashion &amp; Kain Tapis</option>
+          <option>Kerajinan Tangan</option>
+          <option>Pertanian &amp; Rempah</option>
+        </select>
+        <select class="adm-filter" id="filterStatus" onchange="filterTabelProduk()">
+          <option value="">Semua Status</option>
+          <option>Tayang</option>
+          <option>Menunggu ACC</option>
+          <option>Ditolak</option>
+        </select>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tabelProduk">
+          <thead>
+            <tr>
+              <th>Produk</th>
+              <th>UMKM</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-nama="Dodol Durian" data-umkm="Warung Bu Sari" data-kategori="Makanan" data-status="Tayang">
+              <td><div class="adm-prod-cell"><img src="images/dodol.jpeg" class="adm-prod-img" alt="Dodol"><div><div class="adm-prod-name">Dodol Durian</div><div class="adm-prod-sub">Khas Lampung, manis legit</div></div></div></td>
+              <td>Warung Bu Sari</td>
+              <td>Makanan</td>
+              <td>Rp 35.000</td>
+              <td><span class="adm-pill adm-pill-acc">Tayang</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Keripik Pisang Tanduk" data-umkm="Warung Bu Sari" data-kategori="Makanan" data-status="Tayang">
+              <td><div class="adm-prod-cell"><img src="images/keripik-pisang.jpg" class="adm-prod-img" alt="Keripik Pisang"><div><div class="adm-prod-name">Keripik Pisang Tanduk</div><div class="adm-prod-sub">Renyah, aneka rasa</div></div></div></td>
+              <td>Warung Bu Sari</td>
+              <td>Makanan</td>
+              <td>Rp 25.000</td>
+              <td><span class="adm-pill adm-pill-acc">Tayang</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Sambal Lampung" data-umkm="Dapur Ibu Rina" data-kategori="Makanan" data-status="Tayang">
+              <td><div class="adm-prod-cell"><img src="images/sambal.jpg" class="adm-prod-img" alt="Sambal"><div><div class="adm-prod-name">Sambal Lampung</div><div class="adm-prod-sub">Pedas gurih, tanpa pengawet</div></div></div></td>
+              <td>Dapur Ibu Rina</td>
+              <td>Makanan</td>
+              <td>Rp 20.000</td>
+              <td><span class="adm-pill adm-pill-acc">Tayang</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Milk Tea Almond" data-umkm="Minuman Segar Unila" data-kategori="Minuman" data-status="Tayang">
+              <td><div class="adm-prod-cell"><img src="images/milk-tea.jpeg" class="adm-prod-img" alt="Milk Tea"><div><div class="adm-prod-name">Milk Tea Almond</div><div class="adm-prod-sub">Creamy dan segar</div></div></div></td>
+              <td>Minuman Segar Unila</td>
+              <td>Minuman</td>
+              <td>Rp 22.000</td>
+              <td><span class="adm-pill adm-pill-acc">Tayang</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Kemeja Tapis Lampung" data-umkm="Tenun Mbok Inah" data-kategori="Fashion &amp; Kain Tapis" data-status="Menunggu ACC">
+              <td><div class="adm-prod-cell"><img src="images/kemeja.jpeg" class="adm-prod-img" alt="Kemeja Tapis"><div><div class="adm-prod-name">Kemeja Tapis Lampung</div><div class="adm-prod-sub">Motif tradisional premium</div></div></div></td>
+              <td>Tenun Mbok Inah</td>
+              <td>Fashion &amp; Kain Tapis</td>
+              <td>Rp 350.000</td>
+              <td><span class="adm-pill adm-pill-pending">Menunggu ACC</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Kain Tapis Tradisional" data-umkm="Tenun Mbok Inah" data-kategori="Fashion &amp; Kain Tapis" data-status="Tayang">
+              <td><div class="adm-prod-cell"><img src="images/tapis.jpg" class="adm-prod-img" alt="Kain Tapis"><div><div class="adm-prod-name">Kain Tapis Tradisional</div><div class="adm-prod-sub">Handmade, motif khas Lampung</div></div></div></td>
+              <td>Tenun Mbok Inah</td>
+              <td>Fashion &amp; Kain Tapis</td>
+              <td>Rp 500.000</td>
+              <td><span class="adm-pill adm-pill-acc">Tayang</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Tas Tenun Tapis" data-umkm="Kerajinan Pak Budi" data-kategori="Kerajinan Tangan" data-status="Tayang">
+              <td><div class="adm-prod-cell"><img src="images/tas.jpeg" class="adm-prod-img" alt="Tas"><div><div class="adm-prod-name">Tas Tenun Tapis</div><div class="adm-prod-sub">Elegan dan unik</div></div></div></td>
+              <td>Kerajinan Pak Budi</td>
+              <td>Kerajinan Tangan</td>
+              <td>Rp 120.000</td>
+              <td><span class="adm-pill adm-pill-acc">Tayang</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Kopi Robusta Lampung" data-umkm="Kedai Pak Hendra" data-kategori="Pertanian &amp; Rempah" data-status="Menunggu ACC">
+              <td><div class="adm-prod-cell"><img src="images/kopi.jpg" class="adm-prod-img" alt="Kopi"><div><div class="adm-prod-name">Kopi Robusta Lampung</div><div class="adm-prod-sub">Aroma kuat, biji pilihan</div></div></div></td>
+              <td>Kedai Pak Hendra</td>
+              <td>Pertanian &amp; Rempah</td>
+              <td>Rp 45.000</td>
+              <td><span class="adm-pill adm-pill-pending">Menunggu ACC</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="adm-footer">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
