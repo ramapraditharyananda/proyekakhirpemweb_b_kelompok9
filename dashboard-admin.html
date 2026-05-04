@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-admin.html" class="adm-nav-link active">Dashboard</a>
+        <a href="persetujuan-produk.html" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="daftar-produk.html" class="adm-nav-link">Daftar Produk</a>
+        <a href="daftar-umkm.html" class="adm-nav-link">Daftar UMKM</a>
+        <a href="daftar-pengguna.html" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+      </nav>
+      <a href="login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main" style="display:flex; flex-direction:column;">
+      <header class="adm-header">
+        <h2>Dashboard Utama Admin</h2>
+        <p>Pantau dan setujui produk UMKM terbaru.</p>
+      </header>
+      <div class="adm-stats">
+        <div class="adm-stat adm-stat-click" onclick="location.href='daftar-umkm.html'">
+          <div class="adm-stat-label">Total UMKM</div>
+          <div class="adm-stat-val">24</div>
+        </div>
+        <div class="adm-stat adm-stat-click" onclick="location.href='daftar-produk.html'">
+          <div class="adm-stat-label">Produk Tayang</div>
+          <div class="adm-stat-val">87</div>
+        </div>
+        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='persetujuan-produk.html'">
+          <div class="adm-stat-label">Menunggu ACC</div>
+          <div class="adm-stat-val adm-stat-gold">28</div>
+        </div>
+        <div class="adm-stat adm-stat-click" onclick="location.href='daftar-pengguna.html'">
+          <div class="adm-stat-label">Total Pengguna</div>
+          <div class="adm-stat-val">31</div>
+        </div>
+      </div>
+      <div class="adm-grid">
+        <div class="adm-card">
+          <img src="images/dodol.jpeg" alt="Dodol">
+          <div class="adm-overlay">
+            <span class="adm-cat-label">Makanan</span>
+            <div class="adm-card-bottom">
+              <h3>Dodol Durian</h3>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='persetujuan-produk.html'">Kelola <span class="adm-pending-count">12</span></button>
+                <button class="adm-btn-ghost" onclick="location.href='daftar-produk.html'">Lihat Produk</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <img src="images/keripik-pisang.jpg" alt="Keripik Pisang">
+          <div class="adm-overlay">
+            <span class="adm-cat-label">Makanan</span>
+            <div class="adm-card-bottom">
+              <h3>Keripik Pisang</h3>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='persetujuan-produk.html'">Kelola <span class="adm-pending-count">5</span></button>
+                <button class="adm-btn-ghost" onclick="location.href='daftar-produk.html'">Lihat Produk</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <img src="images/kemeja.jpeg" alt="Kemeja Tapis">
+          <div class="adm-overlay">
+            <span class="adm-cat-label">Fashion</span>
+            <div class="adm-card-bottom">
+              <h3>Kemeja Tapis</h3>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='persetujuan-produk.html'">Kelola <span class="adm-pending-count">8</span></button>
+                <button class="adm-btn-ghost" onclick="location.href='daftar-produk.html'">Lihat Produk</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <img src="images/kopi.jpg" alt="Kopi Robusta">
+          <div class="adm-overlay">
+            <span class="adm-cat-label">Pertanian</span>
+            <div class="adm-card-bottom">
+              <h3>Kopi Robusta</h3>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='persetujuan-produk.html'">Kelola <span class="adm-pending-count">3</span></button>
+                <button class="adm-btn-ghost" onclick="location.href='daftar-produk.html'">Lihat Produk</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="adm-footer" style="margin-top: auto">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
