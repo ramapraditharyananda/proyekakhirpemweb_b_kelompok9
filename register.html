@@ -1,67 +1,66 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - UMKMify</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-
+<body class="auth-page">
   <div class="page-wrapper">
     <div class="card">
-
       <div class="card-header">
         <div class="logo-area">
-          <img src="images/UMKMify_Logo_Color.png" alt="UMKMify" class="logo-img"/>
+          <span class="logo-text">UMKM<span>ify</span></span>
         </div>
         <p class="site-tagline">Platform Digital UMKM dan Produk Lokal Lampung</p>
       </div>
-
       <div class="card-body">
         <h2 class="form-title">Buat Akun Baru</h2>
         <p class="form-subtitle">Daftarkan diri Anda untuk mulai menggunakan layanan</p>
-
+        <div class="role-select-area">
+          <label>Daftar sebagai</label>
+          <div class="role-options">
+            <div class="role-option" id="role-pengunjung" onclick="pilihRole('pengunjung')">
+              <span class="role-icon">🛍️</span>
+              <span class="role-label">Pengunjung</span>
+            </div>
+            <div class="role-option" id="role-pemilik" onclick="pilihRole('pemilik')">
+              <span class="role-icon">🏪</span>
+              <span class="role-label">Pemilik UMKM</span>
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <label for="nama">Nama Lengkap</label>
-          <input type="text" id="nama" placeholder="Masukkan nama lengkap"/>
+          <input type="text" id="nama" placeholder="Masukkan nama lengkap">
         </div>
-
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Masukkan email"/>
+          <input type="email" id="email" placeholder="Masukkan email">
         </div>
-
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Buat password"/>
+          <input type="password" id="password" placeholder="Buat password">
         </div>
-
         <div class="form-group">
           <label for="konfirmasi">Konfirmasi Password</label>
-          <input type="password" id="konfirmasi" placeholder="Ulangi password"/>
+          <input type="password" id="konfirmasi" placeholder="Ulangi password">
         </div>
-
         <div class="terms-row">
           <label class="remember-label">
-            <input type="checkbox"/>
-            Saya setuju dengan<a href="#" class="forgot-link">Syarat &amp; Ketentuan</a>
+            <input type="checkbox" id="terms">
+            Saya setuju dengan <a href="#" class="forgot-link">Syarat &amp; Ketentuan</a>
           </label>
         </div>
-
-        <button class="btn-primary">DAFTAR SEKARANG</button>
-
+        <button class="btn-primary" onclick="doRegister()">DAFTAR SEKARANG</button>
         <div class="divider"><span>atau</span></div>
-
-        <p class="switch-link">
-          Sudah punya akun? <a href="login.html">Masuk di sini</a>
-        </p>
+        <p class="switch-link">Sudah punya akun? <a href="login.html">Masuk di sini</a></p>
       </div>
-
     </div>
     <p class="footer-text">© 2026 UMKMify. All rights reserved.</p>
   </div>
-
+  <script src="js/app.js"></script>
 </body>
 </html>

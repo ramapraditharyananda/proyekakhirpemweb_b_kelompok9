@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar UMKM - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-admin.html" class="adm-nav-link">Dashboard</a>
+        <a href="persetujuan-produk.html" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="daftar-produk.html" class="adm-nav-link">Daftar Produk</a>
+        <a href="daftar-umkm.html" class="adm-nav-link active">Daftar UMKM</a>
+        <a href="daftar-pengguna.html" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+      </nav>
+      <a href="login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main">
+      <header class="adm-header">
+        <h2>Daftar UMKM</h2>
+        <p>Kelola seluruh UMKM yang terdaftar di platform.</p>
+      </header>
+      <div class="adm-toolbar">
+        <div class="adm-search-wrap">
+          <input type="text" class="adm-search" id="searchUMKM" placeholder="Cari nama toko atau pemilik..." oninput="filterTabelUMKM()">
+        </div>
+        <select class="adm-filter" id="filterKategoriUMKM" onchange="filterTabelUMKM()">
+          <option value="">Semua Kategori</option>
+          <option>Makanan</option>
+          <option>Minuman</option>
+          <option>Fashion &amp; Kain Tapis</option>
+          <option>Kerajinan Tangan</option>
+          <option>Pertanian &amp; Rempah</option>
+        </select>
+        <select class="adm-filter" id="filterStatusUMKM" onchange="filterTabelUMKM()">
+          <option value="">Semua Status</option>
+          <option>Aktif</option>
+          <option>Nonaktif</option>
+        </select>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tabelUMKM">
+          <thead>
+            <tr>
+              <th>Nama Toko</th>
+              <th>Pemilik</th>
+              <th>Kategori</th>
+              <th>Produk Tayang</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-nama="Warung Bu Sari" data-pemilik="Sari Wahyuni" data-kategori="Makanan" data-status="Aktif">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">🍱</span>
+                  <div>
+                    <div class="adm-prod-name">Warung Bu Sari</div>
+                    <div class="adm-prod-sub">Bandar Lampung</div>
+                  </div>
+                </div>
+              </td>
+              <td>Sari Wahyuni</td>
+              <td>Makanan &amp; Camilan</td>
+              <td><span class="adm-pill adm-pill-acc">12 produk</span></td>
+              <td><span class="adm-pill adm-pill-acc">Aktif</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Detail</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Dapur Ibu Rina" data-pemilik="Rina Susanti" data-kategori="Makanan" data-status="Aktif">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">🍳</span>
+                  <div>
+                    <div class="adm-prod-name">Dapur Ibu Rina</div>
+                    <div class="adm-prod-sub">Bandar Lampung</div>
+                  </div>
+                </div>
+              </td>
+              <td>Rina Susanti</td>
+              <td>Makanan</td>
+              <td><span class="adm-pill adm-pill-acc">4 produk</span></td>
+              <td><span class="adm-pill adm-pill-acc">Aktif</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Detail</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Minuman Segar Unila" data-pemilik="Dewi Anggraini" data-kategori="Minuman" data-status="Aktif">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">🥤</span>
+                  <div>
+                    <div class="adm-prod-name">Minuman Segar Unila</div>
+                    <div class="adm-prod-sub">Bandar Lampung</div>
+                  </div>
+                </div>
+              </td>
+              <td>Dewi Anggraini</td>
+              <td>Minuman</td>
+              <td><span class="adm-pill adm-pill-acc">6 produk</span></td>
+              <td><span class="adm-pill adm-pill-acc">Aktif</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Detail</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Tenun Mbok Inah" data-pemilik="Inah Marlina" data-kategori="Fashion &amp; Kain Tapis" data-status="Aktif">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">👘</span>
+                  <div>
+                    <div class="adm-prod-name">Tenun Mbok Inah</div>
+                    <div class="adm-prod-sub">Pringsewu</div>
+                  </div>
+                </div>
+              </td>
+              <td>Inah Marlina</td>
+              <td>Fashion &amp; Kain Tapis</td>
+              <td><span class="adm-pill adm-pill-acc">9 produk</span></td>
+              <td><span class="adm-pill adm-pill-acc">Aktif</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Detail</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Kerajinan Pak Budi" data-pemilik="Budi Santoso" data-kategori="Kerajinan Tangan" data-status="Aktif">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">🧺</span>
+                  <div>
+                    <div class="adm-prod-name">Kerajinan Pak Budi</div>
+                    <div class="adm-prod-sub">Metro, Lampung</div>
+                  </div>
+                </div>
+              </td>
+              <td>Budi Santoso</td>
+              <td>Kerajinan Tangan</td>
+              <td><span class="adm-pill adm-pill-acc">5 produk</span></td>
+              <td><span class="adm-pill adm-pill-acc">Aktif</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Detail</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+            <tr data-nama="Kedai Pak Hendra" data-pemilik="Hendra Saputra" data-kategori="Pertanian &amp; Rempah" data-status="Nonaktif">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">☕</span>
+                  <div>
+                    <div class="adm-prod-name">Kedai Pak Hendra</div>
+                    <div class="adm-prod-sub">Lampung Barat</div>
+                  </div>
+                </div>
+              </td>
+              <td>Hendra Saputra</td>
+              <td>Pertanian &amp; Rempah</td>
+              <td><span class="adm-pill adm-pill-pending">3 produk</span></td>
+              <td><span class="adm-pill adm-pill-tolak">Nonaktif</span></td>
+              <td><div class="adm-act-btns"><button class="adm-btn-edit">Detail</button><button class="adm-btn-hapus" onclick="hapusBaris(this)">Hapus</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="adm-footer">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
