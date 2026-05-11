@@ -27,3 +27,45 @@ function setStatus(btn, type) {
     : '<span class="adm-pill adm-pill-tolak">Ditolak</span>';
   row.cells[5].innerHTML = '<span style="color:var(--text-light);font-size:13px;">—</span>';
 }
+
+function previewGambar(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('previewWrap').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function submitForm() {
+  var valid = true;
+  var fields = [
+    { id: 'namaProduk', err: 'errNama', check: function(v) { return v.trim() !== ''; } },
+    { id: 'kategori', err: 'errKategori', check: function(v) { return v !== ''; } },
+    { id: 'harga', err: 'errHarga', check: function(v) { return v !== '' && Number(v) >= 0; } },
+    { id: 'deskripsi', err: 'errDeskripsi', check: function(v) { return v.trim() !== ''; } }
+  ];
+  fields.forEach(function(f) {
+    var el = document.getElementById(f.id);
+    var err = document.getElementById(f.err);
+    if (el && !f.check(el.value)) { err.style.display = 'block'; valid = false; }
+    else if (err) { err.style.display = 'none'; }
+  });
+  if (valid) {
+    alert('Produk berhasil diajukan! Menunggu persetujuan admin.');
+    window.location.href = '../dashboard/dashboard-pemilik.html';
+  }
+}
+
+var selectedRole = '';
+
+function pilihRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-option').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  var el = document.getElementById('role-' + role);
+  if (el) el.classList.add('active');
+}
