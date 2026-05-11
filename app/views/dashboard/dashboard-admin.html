@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - UMKMify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body class="body-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <div class="adm-logo-text">UMKM<span>ify</span></div>
+      <nav class="adm-menu">
+        <a href="dashboard-admin.html" class="adm-nav-link active">Dashboard</a>
+        <a href="../produk/persetujuan-produk.html" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="../produk/daftar-produk.html" class="adm-nav-link">Daftar Produk</a>
+        <a href="../umkm/daftar-umkm.html" class="adm-nav-link">Daftar UMKM</a>
+        <a href="../pengguna/daftar-pengguna.html" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="../pengguna/pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+      </nav>
+      <a href="../auth/login.html" class="adm-logout">Keluar Sesi</a>
+    </aside>
+    <main class="adm-main">
+      <header class="adm-header">
+        <h2>Dashboard Admin</h2>
+        <p>Selamat datang kembali, Admin. Berikut ringkasan platform hari ini.</p>
+      </header>
+      <div class="adm-stats">
+        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='../pengguna/daftar-pengguna.html'">
+          <div class="adm-stat-label">Total Pengguna</div>
+          <div class="adm-stat-val adm-stat-gold">128</div>
+        </div>
+        <div class="adm-stat adm-stat-click" onclick="location.href='../umkm/daftar-umkm.html'">
+          <div class="adm-stat-label">Total UMKM</div>
+          <div class="adm-stat-val">46</div>
+        </div>
+        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/daftar-produk.html'">
+          <div class="adm-stat-label">Total Produk Tayang</div>
+          <div class="adm-stat-val">213</div>
+        </div>
+        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/persetujuan-produk.html'">
+          <div class="adm-stat-label">Menunggu Persetujuan</div>
+          <div class="adm-stat-val" style="color:#e67e22;">3</div>
+        </div>
+      </div>
+      <h3 style="font-size:16px;font-weight:800;color:var(--text-dark);margin-bottom:16px;">Produk Terbaru</h3>
+      <div class="adm-grid">
+        <div class="adm-card">
+          <img src="../../../images/keripik-pisang.jpg" alt="Keripik Pisang">
+          <div class="adm-overlay">
+            <div class="adm-cat-label">Makanan</div>
+            <div class="adm-card-bottom">
+              <div>
+                <h3>Keripik Pisang Tanduk</h3>
+                <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;">Warung Bu Sari</div>
+              </div>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.html'">Tinjau <span class="adm-pending-count">!</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <img src="../../../images/kopi.jpg" alt="Kopi">
+          <div class="adm-overlay">
+            <div class="adm-cat-label">Pertanian &amp; Rempah</div>
+            <div class="adm-card-bottom">
+              <div>
+                <h3>Kopi Robusta Lampung</h3>
+                <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;">Kedai Pak Hendra</div>
+              </div>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.html'">Tinjau <span class="adm-pending-count">!</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <img src="../../../images/kemeja.jpeg" alt="Kemeja Tapis">
+          <div class="adm-overlay">
+            <div class="adm-cat-label">Fashion &amp; Kain Tapis</div>
+            <div class="adm-card-bottom">
+              <div>
+                <h3>Kemeja Tapis Lampung</h3>
+                <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;">Tenun Mbok Inah</div>
+              </div>
+              <div class="adm-card-actions">
+                <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.html'">Tinjau <span class="adm-pending-count">!</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="adm-footer">
+        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+      </footer>
+    </main>
+  </div>
+  <script src="../../../js/app.js"></script>
+</body>
+</html>
