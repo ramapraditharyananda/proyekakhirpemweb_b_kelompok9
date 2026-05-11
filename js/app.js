@@ -69,3 +69,66 @@ function pilihRole(role) {
   var el = document.getElementById('role-' + role);
   if (el) el.classList.add('active');
 }
+
+function doLogin() {
+  var email = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value.trim();
+  if (!email || !password) { alert('Email dan password wajib diisi.'); return; }
+  if (!selectedRole) { alert('Pilih peran terlebih dahulu.'); return; }
+  if (selectedRole === 'admin') {
+    if (email === 'admin@umkmify.com' && password === 'admin123') {
+      window.location.href = '../dashboard/dashboard-admin.html';
+    } else {
+      alert('Email atau password admin salah!');
+    }
+  } else if (selectedRole === 'pemilik') {
+    window.location.href = '../dashboard/dashboard-pemilik.html';
+  } else {
+    window.location.href = '../dashboard/dashboard_pengunjung.html';
+  }
+}
+
+function doRegister() {
+  var nama = document.getElementById('nama') ? document.getElementById('nama').value.trim() : '';
+  var email = document.getElementById('email').value.trim();
+  var pass = document.getElementById('password').value;
+  var konfirm = document.getElementById('konfirmasi') ? document.getElementById('konfirmasi').value : '';
+  var terms = document.getElementById('terms') ? document.getElementById('terms').checked : true;
+  if (!nama || !email || !pass) { alert('Semua field wajib diisi.'); return; }
+  if (pass !== konfirm) { alert('Password tidak cocok.'); return; }
+  if (!terms) { alert('Setujui syarat & ketentuan terlebih dahulu.'); return; }
+  if (!selectedRole) { alert('Pilih peran terlebih dahulu.'); return; }
+  alert('Akun berhasil dibuat! Silakan login.');
+  window.location.href = 'login.html?role=' + selectedRole;
+}
+
+var activeKategori = '';
+
+function setFilter(el, kat) {
+  activeKategori = kat;
+  document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  filterProduk();
+}
+
+function filterProduk() {
+  var searchEl = document.getElementById('searchInput');
+  var q = searchEl ? searchEl.value.toLowerCase() : '';
+  document.querySelectorAll('.produk-card').forEach(function(card) {
+    var matchKat = !activeKategori || card.dataset.kategori === activeKategori;
+    var matchCari = !q || card.dataset.nama.toLowerCase().includes(q) || card.dataset.toko.toLowerCase().includes(q);
+    card.style.display = (matchKat && matchCari) ? '' : 'none';
+  });
+}
+
+function filterTabelProduk() {
+  var q = (document.getElementById('searchProduk') ? document.getElementById('searchProduk').value.toLowerCase() : '');
+  var kat = (document.getElementById('filterKategori') ? document.getElementById('filterKategori').value : '');
+  var status = (document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '');
+  document.querySelectorAll('#tabelProduk tbody tr').forEach(function(row) {
+    var matchQ = !q || (row.dataset.nama || '').toLowerCase().includes(q) || (row.dataset.umkm || '').toLowerCase().includes(q);
+    var matchKat = !kat || (row.dataset.kategori || '') === kat;
+    var matchStatus = !status || (row.dataset.status || '') === status;
+    row.style.display = (matchQ && matchKat && matchStatus) ? '' : 'none';
+  });
+}
