@@ -132,3 +132,38 @@ function filterTabelProduk() {
     row.style.display = (matchQ && matchKat && matchStatus) ? '' : 'none';
   });
 }
+
+function filterTabelUMKM() {
+  var q = (document.getElementById('searchUMKM') ? document.getElementById('searchUMKM').value.toLowerCase() : '');
+  var kat = (document.getElementById('filterKategoriUMKM') ? document.getElementById('filterKategoriUMKM').value : '');
+  var status = (document.getElementById('filterStatusUMKM') ? document.getElementById('filterStatusUMKM').value : '');
+  document.querySelectorAll('#tabelUMKM tbody tr').forEach(function(row) {
+    var matchQ = !q || (row.dataset.nama || '').toLowerCase().includes(q) || (row.dataset.pemilik || '').toLowerCase().includes(q);
+    var matchKat = !kat || (row.dataset.kategori || '') === kat;
+    var matchStatus = !status || (row.dataset.status || '') === status;
+    row.style.display = (matchQ && matchKat && matchStatus) ? '' : 'none';
+  });
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var roleFromUrl = params.get('role');
+  if (roleFromUrl) pilihRole(roleFromUrl);
+})();
+
+function bukaModal() {
+  document.getElementById('modalProfil').classList.add('show');
+}
+
+function tutupModal() {
+  document.getElementById('modalProfil').classList.remove('show');
+}
+
+function tutupModalLuar(e) {
+  if (e.target === document.getElementById('modalProfil')) tutupModal();
+}
+
+function simpanProfil(e) {
+  e.preventDefault();
+  tutupModal();
+}
