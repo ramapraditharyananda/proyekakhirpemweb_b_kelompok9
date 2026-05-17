@@ -151,6 +151,120 @@ function filterTabelUMKM() {
   if (roleFromUrl) pilihRole(roleFromUrl);
 })();
 
+
+//dashboard pemilik
+var dataProduk = [
+  {
+    nama: 'Dodol Durian',
+    kategori: 'Makanan',
+    harga: 'Rp 35.000',
+    deskripsi: 'Khas Lampung, manis legit dari buah durian pilihan.',
+    status: 'tayang',    
+    stok: 'tersedia', 
+    gambar: '../../../images/dodol.jpeg'
+  },
+  {
+    nama: 'Keripik Pisang Tanduk',
+    kategori: 'Makanan',
+    harga: 'Rp 25.000',
+    deskripsi: 'Renyah dengan berbagai pilihan rasa, cocok untuk oleh-oleh.',
+    status: 'menunggu',
+    stok: 'tersedia',
+    gambar: '../../../images/keripik-pisang.jpg'
+  },
+  {
+    nama: 'Sambal Lampung',
+    kategori: 'Makanan',
+    harga: 'Rp 20.000',
+    deskripsi: 'Pedas gurih khas Lampung, tanpa pengawet dan bahan alami.',
+    status: 'tayang',
+    stok: 'tersedia',
+    gambar: '../../../images/sambal.jpg'
+  }
+];
+
+var statusPillKartu = {
+  'tayang':   '<span class="adm-pill adm-pill-acc" style="font-size:10px;">Tayang</span>',
+  'menunggu': '<span class="adm-pill adm-pill-pending" style="font-size:10px;">Menunggu</span>',
+  'ditolak':  '<span class="adm-pill adm-pill-tolak" style="font-size:10px;">Ditolak</span>'
+};
+
+var statusPillModal = {
+  'tayang':   '<span class="adm-pill adm-pill-acc">Tayang</span>',
+  'menunggu': '<span class="adm-pill adm-pill-pending">Menunggu Persetujuan</span>',
+  'ditolak':  '<span class="adm-pill adm-pill-tolak">Ditolak</span>'
+};
+
+function renderProduk() {
+  var grid = document.getElementById('gridProduk');
+  if (!grid) return;
+  grid.innerHTML = '';
+  dataProduk.forEach(function(p, i) {
+    var card = document.createElement('div');
+    card.className = 'adm-card';
+    card.style.cursor = 'pointer';
+    card.onclick = (function(idx) { return function() { bukaDetail(idx); }; })(i);
+    card.innerHTML =
+      '<img src="' + p.gambar + '" alt="' + p.nama + '">' +
+      '<div class="adm-overlay">' +
+        '<div class="adm-cat-label">' + p.kategori + '</div>' +
+        '<div class="adm-card-bottom">' +
+          '<div>' +
+            '<h3>' + p.nama + '</h3>' +
+            '<div style="color:rgba(255,255,255,0.6);font-size:11px;">' + p.harga + '</div>' +
+          '</div>' +
+          '<div class="adm-card-actions">' +
+            (statusPillKartu[p.status] || '') +
+            '<span style="color:rgba(255,255,255,0.55);font-size:10px;margin-top:3px;">🔍 Lihat Detail</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+var indexAktif = -1;
+
+function bukaDetail(i) {
+  indexAktif = i;
+  var p = dataProduk[i];
+  document.getElementById('modalNama').textContent = p.nama;
+  document.getElementById('modalKategori').textContent = p.kategori;
+  document.getElementById('modalHarga').textContent = p.harga;
+  document.getElementById('modalDeskripsi').textContent = p.deskripsi;
+  document.getElementById('modalStatusTayang').innerHTML = statusPillModal[p.status] || p.status;
+  document.getElementById('modalGambar').src = p.gambar;
+  document.getElementById('modalGambar').alt = p.nama;
+  var toggle = document.getElementById('toggleStok');
+  toggle.checked = (p.stok === 'tersedia');
+  document.getElementById('labelStok').textContent = toggle.checked ? 'Tersedia' : 'Stok Habis';
+  document.getElementById('modalDetail').classList.add('show');
+}
+
+function ubahStatusStok(checkbox) {
+  document.getElementById('labelStok').textContent = checkbox.checked ? 'Tersedia' : 'Stok Habis';
+}
+
+function simpanStatusStok() {
+  if (indexAktif < 0) return;
+  var tersedia = document.getElementById('toggleStok').checked;
+  dataProduk[indexAktif].stok = tersedia ? 'tersedia' : 'habis';
+  alert('Status ketersediaan "' + dataProduk[indexAktif].nama + '" berhasil diubah menjadi: ' + (tersedia ? 'Tersedia' : 'Stok Habis'));
+  document.getElementById('modalDetail').classList.remove('show');
+  renderProduk();
+}
+
+function tutupModalDetail(e) {
+  if (e.target === document.getElementById('modalDetail')) {
+    document.getElementById('modalDetail').classList.remove('show');
+  }
+}
+//
+
+if (document.getElementById('gridProduk')) {
+  renderProduk();
+}
+
 function bukaModal() {
   document.getElementById('modalProfil').classList.add('show');
 }
