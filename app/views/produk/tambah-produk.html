@@ -17,7 +17,7 @@
       </nav>
       <a href="../auth/login.html" class="adm-logout">Keluar Sesi</a>
     </aside>
-    <main class="adm-main">
+    <main class="adm-main" style="display:flex;flex-direction:column;">
       <header class="adm-header">
         <h2>Tambah Produk Baru</h2>
         <p>Isi detail produk untuk diajukan ke admin.</p>
@@ -48,7 +48,7 @@
             <div>
               <label class="prd-label" for="kategori">Kategori <span style="color:#e74c3c;">*</span></label>
               <select id="kategori" class="prd-select">
-                <option value="">-- Pilih Kategori --</option>
+                <option value="">Pilih Kategori</option>
                 <option>Makanan</option>
                 <option>Minuman</option>
                 <option>Fashion &amp; Kain Tapis</option>
@@ -77,11 +77,11 @@
           </div>
           <div class="prd-form-actions">
             <button type="button" class="prd-btn-cancel" onclick="history.back()">Batal</button>
-            <button type="button" class="prd-btn-submit" onclick="submitForm()">Ajukan Produk →</button>
+            <button type="button" class="prd-btn-submit" onclick="submitForm()">Ajukan Produk</button>
           </div>
         </div>
       </div>
-      <footer class="adm-footer">
+      <footer class="adm-footer" style="margin-top:auto;">
         <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
       </footer>
     </main>
