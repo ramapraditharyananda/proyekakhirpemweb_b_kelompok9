@@ -572,3 +572,153 @@ function openProdukDetail(id) {
   updateModalWishlistBtn(id);
   document.getElementById('modalDetail').classList.add('show');
 }
+
+function updateModalWishlistBtn(id) {
+  var inWish = wishlist.includes(id);
+  var btn = document.getElementById('mdWishlistBtn');
+  document.getElementById('mdWishlistIcon').textContent = inWish ? '❤️' : '🤍';
+  btn.classList.toggle('active', inWish);
+}
+
+function toggleWishlistFromModal() {
+  if (!currentProdukId) return;
+  toggleWishlistItem(currentProdukId);
+  updateModalWishlistBtn(currentProdukId);
+}
+
+function toggleWishlistItem(id, btn) {
+  var idx = wishlist.indexOf(id);
+  var p = produkData.find(function(x) { return x.id == id; });
+  if (!p) return;
+  if (idx === -1) {
+    wishlist.push(id);
+    showToast('❤️ ' + p.nama + ' ditambahkan ke wishlist');
+  } else {
+    wishlist.splice(idx, 1);
+    showToast('🤍 ' + p.nama + ' dihapus dari wishlist');
+  }
+  updateWishlistCount();
+  updateWishlistPanel();
+  if (btn) {
+    btn.textContent = wishlist.includes(id) ? '❤️' : '🤍';
+    btn.classList.toggle('active', wishlist.includes(id));
+  }
+}
+
+function updateWishlistCount() {
+  var cnt = document.getElementById('wishlistCount');
+  if (!cnt) return;
+  cnt.textContent = wishlist.length;
+  cnt.style.display = wishlist.length > 0 ? 'flex' : 'none';
+}
+
+function updateWishlistPanel() {
+  var body = document.getElementById('wishlistBody');
+  var empty = document.getElementById('wishlistEmpty');
+  if (!body) return;
+  if (wishlist.length === 0) {
+    empty.style.display = 'block';
+    body.querySelectorAll('.wishlist-item').forEach(function(el) { el.remove(); });
+    return;
+  }
+  empty.style.display = 'none';
+  body.querySelectorAll('.wishlist-item').forEach(function(el) { el.remove(); });
+  wishlist.forEach(function(id) {
+    var p = produkData.find(function(x) { return x.id == id; });
+    if (!p) return;
+    var fotoSrc = p.foto ? '../../../images/' + p.foto : 'https://via.placeholder.com/52x52/f0eff8/463EA1?text=P';
+    var item = document.createElement('div');
+    item.className = 'wishlist-item';
+    item.innerHTML =
+      '<img class="wishlist-item-img" src="' + fotoSrc + '" alt="' + p.nama + '" onerror="this.src=\'https://via.placeholder.com/52x52/f0eff8/463EA1?text=P\'">' +
+      '<div>' +
+        '<div class="wishlist-item-name">' + p.nama + '</div>' +
+        '<div class="wishlist-item-price">' + formatRupiahPengunjung(p.harga) + '</div>' +
+      '</div>' +
+      '<button class="wishlist-item-remove" onclick="toggleWishlistItem(' + id + '); updateWishlistPanel();" title="Hapus">✕</button>';
+    body.appendChild(item);
+  });
+}
+
+function toggleWishlist() {
+  var panel = document.getElementById('wishlistPanel');
+  if (panel) panel.classList.toggle('open');
+}
+
+function openReport(umkmName) {
+  currentUmkmName = umkmName;
+  document.getElementById('reportUmkmName').textContent = umkmName;
+  document.querySelectorAll('.report-option').forEach(function(el) { el.classList.remove('selected'); });
+  document.querySelectorAll('input[name="reportReason"]').forEach(function(el) { el.checked = false; });
+  document.getElementById('reportKeterangan').value = '';
+  document.getElementById('modalReport').classList.add('show');
+}
+
+function openReportFromUmkm() {
+  closeModal('modalUmkm');
+  setTimeout(function() { openReport(currentUmkmName); }, 200);
+}
+
+function selectReport(el) {
+  document.querySelectorAll('.report-option').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function submitReport() {
+  var sel = document.querySelector('input[name="reportReason"]:checked');
+  if (!sel) { showToast('⚠️ Pilih alasan pelaporan terlebih dahulu'); return; }
+  closeModal('modalReport');
+  showToast('✅ Laporan berhasil dikirim. Terima kasih!');
+}
+
+function openUmkmDetail(idx) {
+  var u = tokoData[idx];
+  if (!u) return;
+  currentUmkmName = u.nama_toko;
+  document.getElementById('muIcon').textContent = '🏪';
+  document.getElementById('muNama').textContent = u.nama_toko;
+  document.getElementById('muKat').textContent = u.kategori || '-';
+  document.getElementById('muPemilik').textContent = u.pemilik || '-';
+  document.getElementById('muLokasi').textContent = u.alamat || '-';
+  document.getElementById('muJumlah').textContent = (u.jumlah_produk || 0) + ' produk';
+  document.getElementById('muStatus').innerHTML = u.status === 'aktif' || u.status === 'Aktif'
+    ? '<span class="pill-aktif">✓ Aktif</span>'
+    : '<span class="pill-nonaktif">✗ Nonaktif</span>';
+
+  var produkToko = produkData.filter(function(p) { return p.nama_toko === u.nama_toko; });
+  var list = document.getElementById('muProdukList');
+  list.innerHTML = '';
+  if (produkToko.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text-light);padding:10px 0;">Belum ada produk tayang dari toko ini.</div>';
+  } else {
+    produkToko.forEach(function(p) {
+      var row = document.createElement('div');
+      row.className = 'umkm-produk-row';
+      row.innerHTML = '<span class="umkm-produk-row-name">' + p.nama + '</span><span class="umkm-produk-row-harga">' + formatRupiahPengunjung(p.harga) + '</span>';
+      list.appendChild(row);
+    });
+  }
+  document.getElementById('modalUmkm').classList.add('show');
+}
+
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+function closeModalOutside(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+if (document.getElementById('produkGrid')) {
+  renderProduk(produkData);
+  renderUMKM();
+}
