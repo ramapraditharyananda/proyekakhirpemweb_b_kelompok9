@@ -1,3 +1,33 @@
+<?php
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+require_once '../../../app/models/koneksi.php';
+
+$stmtPengguna = $pdo->query("SELECT COUNT(*) AS total FROM users");
+$totalPengguna = $stmtPengguna->fetch()['total'];
+
+$stmtUMKM = $pdo->query("SELECT COUNT(*) AS total FROM toko");
+$totalUMKM = $stmtUMKM->fetch()['total'];
+
+$stmtTayang = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'disetujui'");
+$totalTayang = $stmtTayang->fetch()['total'];
+
+$stmtMenunggu = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'pending'");
+$totalMenunggu = $stmtMenunggu->fetch()['total'];
+
+$stmtProdukTerbaru = $pdo->query("
+    SELECT p.*, k.nama AS nama_kategori, t.nama_toko
+    FROM produk p
+    LEFT JOIN kategori k ON p.kategori_id = k.id
+    LEFT JOIN toko t ON p.toko_id = t.id
+    ORDER BY p.created_at DESC
+    LIMIT 3
+");
+$produkTerbaru = $stmtProdukTerbaru->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -12,85 +42,67 @@
     <aside class="adm-sidebar">
       <div class="adm-logo-text">UMKM<span>ify</span></div>
       <nav class="adm-menu">
-        <a href="dashboard-admin.html" class="adm-nav-link active">Dashboard</a>
-        <a href="../produk/persetujuan-produk.html" class="adm-nav-link">Persetujuan Produk</a>
-        <a href="../produk/daftar-produk.html" class="adm-nav-link">Daftar Produk</a>
-        <a href="../umkm/daftar-umkm.html" class="adm-nav-link">Daftar UMKM</a>
-        <a href="../pengguna/daftar-pengguna.html" class="adm-nav-link">Daftar Pengguna</a>
-        <a href="../pengguna/pengaturan-kategori.html" class="adm-nav-link">Pengaturan Kategori</a>
+        <a href="dashboard-admin.php" class="adm-nav-link active">Dashboard</a>
+        <a href="../produk/persetujuan-produk.php" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="../produk/daftar-produk.php" class="adm-nav-link">Daftar Produk</a>
+        <a href="../umkm/daftar-umkm.php" class="adm-nav-link">Daftar UMKM</a>
+        <a href="../pengguna/daftar-pengguna.php" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="../pengguna/pengaturan-kategori.php" class="adm-nav-link">Pengaturan Kategori</a>
       </nav>
-      <a href="../auth/login.html" class="adm-logout">Keluar Sesi</a>
+      <a href="../auth/login.php" class="adm-logout">Keluar Sesi</a>
     </aside>
     <main class="adm-main">
       <header class="adm-header">
-        <h2>Dashboard Admin</h2>
-        <p>Selamat datang kembali, Admin. Berikut ringkasan platform hari ini.</p>
+        <div class="adm-header-text">
+          <h2>Dashboard Admin</h2>
+          <p>Selamat datang kembali, Admin. Berikut ringkasan platform hari ini.</p>
+        </div>
       </header>
       <div class="adm-stats">
-        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='../pengguna/daftar-pengguna.html'">
+        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='../pengguna/daftar-pengguna.php'">
           <div class="adm-stat-label">Total Pengguna</div>
-          <div class="adm-stat-val adm-stat-gold">128</div>
+          <div class="adm-stat-val adm-stat-gold"><?= $totalPengguna ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='../umkm/daftar-umkm.html'">
+        <div class="adm-stat adm-stat-click" onclick="location.href='../umkm/daftar-umkm.php'">
           <div class="adm-stat-label">Total UMKM</div>
-          <div class="adm-stat-val">46</div>
+          <div class="adm-stat-val"><?= $totalUMKM ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/daftar-produk.html'">
+        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/daftar-produk.php'">
           <div class="adm-stat-label">Total Produk Tayang</div>
-          <div class="adm-stat-val">213</div>
+          <div class="adm-stat-val"><?= $totalTayang ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/persetujuan-produk.html'">
+        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/persetujuan-produk.php'">
           <div class="adm-stat-label">Menunggu Persetujuan</div>
-          <div class="adm-stat-val" style="color:#e67e22;">3</div>
+          <div class="adm-stat-val" style="color:#e67e22;"><?= $totalMenunggu ?></div>
         </div>
       </div>
-      <h3 style="font-size:16px;font-weight:800;color:var(--text-dark);margin-bottom:16px;">Produk Terbaru</h3>
+      <div class="adm-section-head">Produk Terbaru</div>
       <div class="adm-grid">
-        <div class="adm-card">
-          <img src="../../../images/keripik-pisang.jpg" alt="Keripik Pisang">
-          <div class="adm-overlay">
-            <div class="adm-cat-label">Makanan</div>
-            <div class="adm-card-bottom">
-              <div>
-                <h3>Keripik Pisang Tanduk</h3>
-                <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;">Warung Bu Sari</div>
-              </div>
-              <div class="adm-card-actions">
-                <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.html'">Tinjau <span class="adm-pending-count">!</span></button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="adm-card">
-          <img src="../../../images/kopi.jpg" alt="Kopi">
-          <div class="adm-overlay">
-            <div class="adm-cat-label">Pertanian &amp; Rempah</div>
-            <div class="adm-card-bottom">
-              <div>
-                <h3>Kopi Robusta Lampung</h3>
-                <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;">Kedai Pak Hendra</div>
-              </div>
-              <div class="adm-card-actions">
-                <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.html'">Tinjau <span class="adm-pending-count">!</span></button>
+        <?php if (empty($produkTerbaru)): ?>
+          <p style="color:var(--text-light);font-size:14px;">Belum ada produk terbaru.</p>
+        <?php else: ?>
+          <?php foreach ($produkTerbaru as $p): ?>
+            <div class="adm-card">
+              <?php if (!empty($p['foto'])): ?>
+              <img src="../../../images/<?= htmlspecialchars($p['foto']) ?>" alt="<?= htmlspecialchars($p['nama']) ?>">
+              <?php else: ?>
+              <div style="width:100%;height:180px;background:#e4e2f4;display:flex;align-items:center;justify-content:center;font-size:40px;">📦</div>
+              <?php endif; ?>
+              <div class="adm-overlay">
+                <div class="adm-cat-label"><?= htmlspecialchars($p['nama_kategori'] ?? '-') ?></div>
+                <div class="adm-card-bottom">
+                  <div>
+                    <h3><?= htmlspecialchars($p['nama']) ?></h3>
+                    <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;"><?= htmlspecialchars($p['nama_toko'] ?? '-') ?></div>
+                  </div>
+                  <div class="adm-card-actions">
+                    <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.php'">Tinjau <?php if ($p['status'] === 'pending'): ?><span class="adm-pending-count">!</span><?php endif; ?></button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="adm-card">
-          <img src="../../../images/kemeja.jpeg" alt="Kemeja Tapis">
-          <div class="adm-overlay">
-            <div class="adm-cat-label">Fashion &amp; Kain Tapis</div>
-            <div class="adm-card-bottom">
-              <div>
-                <h3>Kemeja Tapis Lampung</h3>
-                <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;">Tenun Mbok Inah</div>
-              </div>
-              <div class="adm-card-actions">
-                <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.html'">Tinjau <span class="adm-pending-count">!</span></button>
-              </div>
-            </div>
-          </div>
-        </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
       <footer class="adm-footer">
         <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
