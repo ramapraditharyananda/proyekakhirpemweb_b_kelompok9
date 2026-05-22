@@ -201,3 +201,172 @@ function batalEditPengguna(btn, nama, email, role) {
       '</div>';
   }
 }
+
+function lihatDetailUMKM(btn) {
+  var row = btn.closest('tr');
+  var nama = row.dataset.nama || '';
+  var pemilik = row.dataset.pemilik || '';
+  var kategori = row.dataset.kategori || '';
+  var status = row.dataset.status || '';
+  var produkCell = row.cells[3].querySelector('.adm-pill') ? row.cells[3].querySelector('.adm-pill').textContent : '-';
+  document.getElementById('detailNamaToko').textContent = nama;
+  document.getElementById('detailPemilik').textContent = pemilik;
+  document.getElementById('detailKategori').textContent = kategori;
+  document.getElementById('detailStatus').innerHTML = status === 'Aktif'
+    ? '<span class="adm-pill adm-pill-acc">Aktif</span>'
+    : '<span class="adm-pill adm-pill-tolak">Nonaktif</span>';
+  document.getElementById('detailProduk').textContent = produkCell;
+  document.getElementById('modalDetailUMKM').classList.add('show');
+}
+
+function tutupModalUMKM() {
+  document.getElementById('modalDetailUMKM').classList.remove('show');
+}
+
+function previewGambar(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('previewWrap').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function submitForm() {
+  var valid = true;
+  var fields = [
+    { id: 'namaProduk', err: 'errNama', check: function(v) { return v.trim() !== ''; } },
+    { id: 'kategori', err: 'errKategori', check: function(v) { return v !== ''; } },
+    { id: 'harga', err: 'errHarga', check: function(v) { return v !== '' && Number(v) >= 0; } },
+    { id: 'deskripsi', err: 'errDeskripsi', check: function(v) { return v.trim() !== ''; } }
+  ];
+  fields.forEach(function(f) {
+    var el = document.getElementById(f.id);
+    var err = document.getElementById(f.err);
+    if (el && !f.check(el.value)) { err.style.display = 'block'; valid = false; }
+    else if (err) { err.style.display = 'none'; }
+  });
+  if (valid) {
+    document.getElementById('formTambahProdukSubmit').submit();
+  }
+}
+
+var selectedRole = '';
+
+function pilihRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-option').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  var el = document.getElementById('role-' + role);
+  if (el) el.classList.add('active');
+  var hidden = document.getElementById('hiddenRole');
+  if (hidden) hidden.value = role;
+}
+
+function doLogin() {
+  var email = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value.trim();
+  if (!email || !password) { alert('Email dan password wajib diisi.'); return; }
+  if (!selectedRole) { alert('Pilih peran terlebih dahulu.'); return; }
+  document.getElementById('loginForm').submit();
+}
+
+function doRegister() {
+  var nama = document.getElementById('nama') ? document.getElementById('nama').value.trim() : '';
+  var email = document.getElementById('email').value.trim();
+  var pass = document.getElementById('password').value;
+  var konfirm = document.getElementById('konfirmasi') ? document.getElementById('konfirmasi').value : '';
+  var terms = document.getElementById('terms') ? document.getElementById('terms').checked : true;
+  if (!nama || !email || !pass) { alert('Semua field wajib diisi.'); return; }
+  if (pass !== konfirm) { alert('Password tidak cocok.'); return; }
+  if (!terms) { alert('Setujui syarat & ketentuan terlebih dahulu.'); return; }
+  if (!selectedRole) { alert('Pilih peran terlebih dahulu.'); return; }
+  document.getElementById('registerForm').submit();
+}
+
+var activeKategori = '';
+
+function setFilter(el, kat) {
+  activeKategori = kat;
+  document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  filterProduk();
+}
+
+function filterProduk() {
+  var searchEl = document.getElementById('searchInput');
+  var q = searchEl ? searchEl.value.toLowerCase() : '';
+  document.querySelectorAll('.produk-card').forEach(function(card) {
+    var matchKat = !activeKategori || card.dataset.kategori === activeKategori;
+    var matchCari = !q || card.dataset.nama.toLowerCase().includes(q) || card.dataset.toko.toLowerCase().includes(q);
+    card.style.display = (matchKat && matchCari) ? '' : 'none';
+  });
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var roleFromUrl = params.get('role');
+  if (roleFromUrl) pilihRole(roleFromUrl);
+
+  var errorMsg = params.get('error');
+  var successMsg = params.get('success');
+  var notifEl = document.getElementById('notifMsg');
+  if (notifEl) {
+    if (errorMsg) { notifEl.textContent = errorMsg; notifEl.style.color = 'red'; notifEl.style.display = 'block'; }
+    if (successMsg) { notifEl.textContent = successMsg; notifEl.style.color = 'green'; notifEl.style.display = 'block'; }
+  }
+})();
+
+var statusPillKartu = {
+  'tayang':   '<span class="adm-pill adm-pill-acc" style="font-size:10px;">Tayang</span>',
+  'menunggu': '<span class="adm-pill adm-pill-pending" style="font-size:10px;">Menunggu</span>',
+  'ditolak':  '<span class="adm-pill adm-pill-tolak" style="font-size:10px;">Ditolak</span>'
+};
+
+var statusPillModal = {
+  'tayang':   '<span class="adm-pill adm-pill-acc">Tayang</span>',
+  'menunggu': '<span class="adm-pill adm-pill-pending">Menunggu Persetujuan</span>',
+  'ditolak':  '<span class="adm-pill adm-pill-tolak">Ditolak</span>'
+};
+
+function formatRupiah(angka) {
+  return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
+}
+
+function renderProduk() {
+  var grid = document.getElementById('gridProduk');
+  if (!grid) return;
+  grid.innerHTML = '';
+  if (!dataProduk || dataProduk.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-light);font-size:14px;">Belum ada produk. Silakan tambah produk baru.</p>';
+    return;
+  }
+  dataProduk.forEach(function(p, i) {
+    var card = document.createElement('div');
+    card.className = 'adm-card';
+    card.style.cursor = 'pointer';
+    card.onclick = (function(idx) { return function() { bukaDetail(idx); }; })(i);
+    var fotoSrc = p.foto ? '../../../images/' + p.foto : '../../../images/placeholder.jpg';
+    card.innerHTML =
+      '<img src="' + fotoSrc + '" alt="' + p.nama + '">' +
+      '<div class="adm-overlay">' +
+        '<div class="adm-cat-label">' + (p.nama_kategori || '-') + '</div>' +
+        '<div class="adm-card-bottom">' +
+          '<div>' +
+            '<h3>' + p.nama + '</h3>' +
+            '<div style="color:rgba(255,255,255,0.6);font-size:11px;">' + formatRupiah(p.harga) + '</div>' +
+          '</div>' +
+          '<div class="adm-card-actions">' +
+            (statusPillKartu[p.status] || '') +
+            '<span style="color:rgba(255,255,255,0.55);font-size:10px;margin-top:3px;">🔍 Lihat Detail</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+var indexAktif = -1;
