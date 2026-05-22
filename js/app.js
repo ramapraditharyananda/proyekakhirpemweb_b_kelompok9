@@ -370,3 +370,205 @@ function renderProduk() {
 }
 
 var indexAktif = -1;
+
+function bukaDetail(i) {
+  indexAktif = i;
+  var p = dataProduk[i];
+  var fotoSrc = p.foto ? '../../../images/' + p.foto : '../../../images/placeholder.jpg';
+  document.getElementById('modalNama').textContent = p.nama;
+  document.getElementById('modalKategori').textContent = p.nama_kategori || '-';
+  document.getElementById('modalHarga').textContent = formatRupiah(p.harga);
+  document.getElementById('modalDeskripsi').textContent = p.deskripsi;
+  document.getElementById('modalStatusTayang').innerHTML = statusPillModal[p.status] || p.status;
+  document.getElementById('modalGambar').src = fotoSrc;
+  document.getElementById('modalGambar').alt = p.nama;
+  var toggle = document.getElementById('toggleStok');
+  toggle.checked = (p.status === 'tayang' || p.status === 'tersedia');
+  document.getElementById('labelStok').textContent = toggle.checked ? 'Tersedia' : 'Stok Habis';
+  document.getElementById('modalDetail').classList.add('show');
+}
+
+function ubahStatusStok(checkbox) {
+  document.getElementById('labelStok').textContent = checkbox.checked ? 'Tersedia' : 'Stok Habis';
+}
+
+function simpanStatusStok() {
+  if (indexAktif < 0) return;
+  var tersedia = document.getElementById('toggleStok').checked;
+  var p = dataProduk[indexAktif];
+  var stokBaru = tersedia ? 'tersedia' : 'habis';
+
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'dashboard-pemilik.php';
+
+  var inputAksi = document.createElement('input');
+  inputAksi.type = 'hidden';
+  inputAksi.name = 'aksi';
+  inputAksi.value = 'ubah_stok';
+
+  var inputId = document.createElement('input');
+  inputId.type = 'hidden';
+  inputId.name = 'id_produk';
+  inputId.value = p.id;
+
+  var inputStok = document.createElement('input');
+  inputStok.type = 'hidden';
+  inputStok.name = 'stok';
+  inputStok.value = stokBaru;
+
+  form.appendChild(inputAksi);
+  form.appendChild(inputId);
+  form.appendChild(inputStok);
+  document.body.appendChild(form);
+  form.submit();
+}
+
+function tutupModalDetail(e) {
+  if (e.target === document.getElementById('modalDetail')) {
+    document.getElementById('modalDetail').classList.remove('show');
+  }
+}
+
+function bukaModal() {
+  document.getElementById('modalProfil').classList.add('show');
+}
+
+function tutupModal() {
+  document.getElementById('modalProfil').classList.remove('show');
+}
+
+function tutupModalLuar(e) {
+  if (e.target === document.getElementById('modalProfil')) tutupModal();
+}
+
+function simpanProfil(e) {
+  e.preventDefault();
+  tutupModal();
+}
+
+if (document.getElementById('gridProduk')) {
+  renderProduk();
+}
+var activeKategoriPengunjung = '';
+var wishlist = [];
+var currentProdukId = null;
+var currentUmkmName = '';
+
+function formatRupiahPengunjung(angka) {
+  return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
+}
+
+function renderProduk(data) {
+  var grid = document.getElementById('produkGrid');
+  var noRes = document.getElementById('noResults');
+  if (!grid) return;
+  grid.querySelectorAll('.produk-card').forEach(function(c) { c.remove(); });
+
+  if (!data || data.length === 0) {
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  data.forEach(function(p) {
+    var inWish = wishlist.includes(p.id);
+    var fotoSrc = p.foto ? '../../../images/' + p.foto : 'https://via.placeholder.com/400x300/f0eff8/463EA1?text=' + encodeURIComponent(p.nama);
+    var hargaStr = formatRupiahPengunjung(p.harga);
+    var card = document.createElement('div');
+    card.className = 'produk-card';
+    card.dataset.kategori = p.kategori || '';
+    card.dataset.nama = p.nama || '';
+    card.dataset.toko = p.nama_toko || '';
+    card.dataset.harga = p.harga || 0;
+    card.innerHTML =
+      '<div class="produk-img-wrap">' +
+        '<img src="' + fotoSrc + '" alt="' + p.nama + '" onerror="this.src=\'https://via.placeholder.com/400x300/f0eff8/463EA1?text=' + encodeURIComponent(p.nama) + '\'">' +
+        '<span class="produk-cat-badge">' + (p.kategori || '-') + '</span>' +
+        '<button class="produk-wishlist-btn ' + (inWish ? 'active' : '') + '" onclick="event.stopPropagation(); toggleWishlistItem(' + p.id + ', this)" title="' + (inWish ? 'Hapus dari wishlist' : 'Simpan ke wishlist') + '">' +
+          (inWish ? '❤️' : '🤍') +
+        '</button>' +
+      '</div>' +
+      '<div class="produk-body" onclick="openProdukDetail(' + p.id + ')">' +
+        '<div class="produk-toko">' + (p.nama_toko || '-') + '</div>' +
+        '<div class="produk-nama">' + p.nama + '</div>' +
+        '<div class="produk-desc">' + (p.deskripsi || '').substring(0, 70) + '...</div>' +
+        '<div class="produk-footer">' +
+          '<span class="produk-harga">' + hargaStr + '</span>' +
+          '<button class="produk-detail-btn" onclick="event.stopPropagation(); openProdukDetail(' + p.id + ')">Lihat Detail</button>' +
+        '</div>' +
+      '</div>';
+    grid.insertBefore(card, noRes);
+  });
+}
+
+function renderUMKM() {
+  var grid = document.getElementById('umkmGrid');
+  if (!grid || !tokoData) return;
+  grid.innerHTML = '';
+  tokoData.forEach(function(u, i) {
+    var card = document.createElement('div');
+    card.className = 'umkm-card';
+    card.innerHTML =
+      '<div class="umkm-icon">🏪</div>' +
+      '<div style="flex:1" onclick="openUmkmDetail(' + i + ')">' +
+        '<div class="umkm-name">' + u.nama_toko + '</div>' +
+        '<div class="umkm-cat">' + (u.kategori || '-') + '</div>' +
+        '<div class="umkm-count">' + (u.jumlah_produk || 0) + ' produk · ' + (u.alamat || '-') + '</div>' +
+      '</div>' +
+      '<div class="umkm-actions">' +
+        '<button class="umkm-report-btn" onclick="event.stopPropagation(); openReport(\'' + u.nama_toko.replace(/'/g, "\\'") + '\')">🚩 Laporkan</button>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function setFilter(el, kat) {
+  activeKategoriPengunjung = kat;
+  document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  filterProduk();
+}
+
+function filterProduk() {
+  if (!produkData) return;
+  var searchEl = document.getElementById('searchInput');
+  var q = searchEl ? (searchEl.value || '').toLowerCase() : '';
+  var filtered = produkData.filter(function(p) {
+    var matchKat = !activeKategoriPengunjung || (p.kategori || '') === activeKategoriPengunjung;
+    var matchQ = !q || (p.nama || '').toLowerCase().includes(q) || (p.nama_toko || '').toLowerCase().includes(q);
+    return matchKat && matchQ;
+  });
+  renderProduk(filtered);
+}
+
+function sortProduk(val) {
+  if (!produkData) return;
+  var sorted = produkData.slice();
+  if (val === 'harga-asc') sorted.sort(function(a, b) { return a.harga - b.harga; });
+  else if (val === 'harga-desc') sorted.sort(function(a, b) { return b.harga - a.harga; });
+  else if (val === 'nama-asc') sorted.sort(function(a, b) { return a.nama.localeCompare(b.nama); });
+  renderProduk(sorted);
+}
+
+function openProdukDetail(id) {
+  var p = produkData.find(function(x) { return x.id == id; });
+  if (!p) return;
+  currentProdukId = id;
+  var fotoSrc = p.foto ? '../../../images/' + p.foto : 'https://via.placeholder.com/700x280/f0eff8/463EA1?text=' + encodeURIComponent(p.nama);
+  var hargaStr = formatRupiahPengunjung(p.harga);
+  var wa = p.no_wa ? 'https://wa.me/' + p.no_wa.replace(/[^0-9]/g, '') : '#';
+  document.getElementById('mdImg').src = fotoSrc;
+  document.getElementById('mdImg').onerror = function() { this.src = 'https://via.placeholder.com/700x280/f0eff8/463EA1?text=' + encodeURIComponent(p.nama); };
+  document.getElementById('mdKat').textContent = p.kategori || '-';
+  document.getElementById('mdNama').textContent = p.nama;
+  document.getElementById('mdToko').textContent = '🏪 ' + (p.nama_toko || '-');
+  document.getElementById('mdHarga').textContent = hargaStr;
+  document.getElementById('mdDesc').textContent = p.deskripsi || '';
+  document.getElementById('mdKatInfo').textContent = p.kategori || '-';
+  document.getElementById('mdTokoInfo').textContent = p.nama_toko || '-';
+  document.getElementById('mdLokasi').textContent = p.lokasi || '-';
+  document.getElementById('mdWaLink').href = wa;
+  updateModalWishlistBtn(id);
+  document.getElementById('modalDetail').classList.add('show');
+}
