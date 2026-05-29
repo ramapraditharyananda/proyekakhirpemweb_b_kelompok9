@@ -1,47 +1,12 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'pemilik') {
-    header("Location: ../auth/login.php");
-    exit();
-}
-require_once '../../../app/models/koneksi.php';
-
-$id_user = $_SESSION['user_id'] ?? 0;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi']) && $_POST['aksi'] === 'ubah_stok') {
-    $id_produk = (int)($_POST['id_produk'] ?? 0);
-    $stok_baru = ($_POST['stok'] === 'tersedia') ? 'tersedia' : 'habis';
-    $stmt = $pdo->prepare("UPDATE produk SET stok = ? WHERE id = ? AND toko_id IN (SELECT id FROM toko WHERE user_id = ?)");
-    $stmt->execute([$stok_baru, $id_produk, $id_user]);
-    header("Location: dashboard-pemilik.php");
-    exit;
-}
-
-$stmtToko = $pdo->prepare("SELECT * FROM toko WHERE user_id = ? LIMIT 1");
-$stmtToko->execute([$id_user]);
-$toko = $stmtToko->fetch();
-$toko_id = $toko['id'] ?? 0;
-
-$stmtProduk = $pdo->prepare("
-    SELECT p.*, k.nama AS nama_kategori, k.ikon AS ikon_kategori
-    FROM produk p
-    LEFT JOIN kategori k ON p.kategori_id = k.id
-    WHERE p.toko_id = ?
-    ORDER BY p.created_at DESC
-");
-$stmtProduk->execute([$toko_id]);
-$produkList = $stmtProduk->fetchAll();
-
-$jumlahTayang   = 0;
-$jumlahMenunggu = 0;
-$jumlahDitolak  = 0;
-foreach ($produkList as $p) {
-    if ($p['status'] === 'disetujui') $jumlahTayang++;
-    if ($p['status'] === 'pending')   $jumlahMenunggu++;
-    if ($p['status'] === 'ditolak')   $jumlahDitolak++;
-}
-
-$produkJson = json_encode(array_values($produkList), JSON_UNESCAPED_UNICODE);
+/** @var string $sapaan */
+/** @var string $namaUser */
+/** @var array|null $toko */
+/** @var int   $jumlahTotal */
+/** @var int   $jumlahTayang */
+/** @var int   $jumlahMenunggu */
+/** @var int   $jumlahDitolak */
+/** @var array $produkTerbaru */
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -50,27 +15,57 @@ $produkJson = json_encode(array_values($produkList), JSON_UNESCAPED_UNICODE);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Pemilik - UMKMify</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body class="body-admin">
   <div class="adm-layout">
     <aside class="adm-sidebar">
       <div class="adm-logo-text">UMKM<span>ify</span></div>
       <nav class="adm-menu">
-        <a href="dashboard-pemilik.php" class="adm-nav-link active">Dashboard</a>
-        <a href="../produk/tambah-produk.php" class="adm-nav-link">Tambah Produk</a>
+        <a href="DashboardPemilikController.php" class="adm-nav-link active">Dashboard</a>
+        <a href="TambahProdukController.php" class="adm-nav-link">Tambah Produk</a>
+        <a href="StatusProdukController.php" class="adm-nav-link">Status Produk</a>
+        <a href="EditProfilPemilikController.php" class="adm-nav-link">Edit Profil</a>
       </nav>
-      <a href="../auth/login.php" class="adm-logout">Keluar Sesi</a>
+      <a href="LogoutController.php" class="adm-logout">Keluar Sesi</a>
     </aside>
     <main class="adm-main" style="display:flex;flex-direction:column;">
       <header class="adm-header">
-        <h2>Dashboard Pemilik UMKM</h2>
-        <p>Kelola toko dan produk Anda di platform UMKMify.</p>
+        <div class="adm-header-text">
+          <h2><?= htmlspecialchars($sapaan) ?>, <?= htmlspecialchars($namaUser) ?></h2>
+          <p>Selamat datang di dashboard pengelolaan toko Anda di UMKMify.</p>
+        </div>
+        <a href="EditProfilPemilikController.php" class="owner-avatar-btn" title="Edit Profil">
+          <div class="owner-avatar"><?= strtoupper(mb_substr($namaUser, 0, 1)) ?></div>
+        </a>
       </header>
+
+      <?php if ($toko): ?>
+      <div class="toko-info-banner">
+        <div class="toko-info-left">
+          <div class="toko-info-ikon">🏪</div>
+          <div>
+            <div class="toko-info-nama"><?= htmlspecialchars($toko['nama_toko'] ?? '-') ?></div>
+            <div class="toko-info-sub">
+              <?= !empty($toko['alamat']) ? htmlspecialchars($toko['alamat']) : 'Alamat belum diisi' ?>
+              <?php if (!empty($toko['no_wa'])): ?>
+                &nbsp;·&nbsp; WA: <?= htmlspecialchars($toko['no_wa']) ?>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+        <a href="EditProfilPemilikController.php" class="toko-info-edit">Edit Toko</a>
+      </div>
+      <?php endif; ?>
+
       <div class="adm-stats">
         <div class="adm-stat adm-stat-purple">
+          <div class="adm-stat-label">Total Produk</div>
+          <div class="adm-stat-val adm-stat-gold"><?= $jumlahTotal ?></div>
+        </div>
+        <div class="adm-stat">
           <div class="adm-stat-label">Produk Tayang</div>
-          <div class="adm-stat-val adm-stat-gold"><?= $jumlahTayang ?></div>
+          <div class="adm-stat-val" style="color:#27ae60;"><?= $jumlahTayang ?></div>
         </div>
         <div class="adm-stat">
           <div class="adm-stat-label">Menunggu Persetujuan</div>
@@ -81,65 +76,112 @@ $produkJson = json_encode(array_values($produkList), JSON_UNESCAPED_UNICODE);
           <div class="adm-stat-val" style="color:#c0392b;"><?= $jumlahDitolak ?></div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:16px;font-weight:800;color:var(--text-dark);">Produk Saya</h3>
-        <a href="../produk/tambah-produk.php" class="adm-btn-tambah" style="text-decoration:none;padding:10px 18px;border-radius:12px;font-size:13px;">+ Tambah Produk</a>
+
+      <div class="dash-section-header">
+        <h3 class="dash-section-title">Produk Terbaru</h3>
+        <a href="StatusProdukController.php" class="dash-section-link">Lihat Semua →</a>
       </div>
-      <div class="adm-grid" id="gridProduk"></div>
+
+      <?php if (empty($produkTerbaru)): ?>
+      <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <div class="empty-state-title">Belum ada produk</div>
+        <div class="empty-state-desc">Mulai promosikan produk UMKM Anda sekarang!</div>
+        <a href="TambahProdukController.php" class="adm-btn-tambah" style="text-decoration:none;display:inline-block;margin-top:12px;">+ Tambah Produk Pertama</a>
+      </div>
+      <?php else: ?>
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Produk</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Ketersediaan</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($produkTerbaru as $p): ?>
+            <tr>
+              <td>
+                <div class="adm-prod-cell">
+                  <?php if (!empty($p['foto'])): ?>
+                  <img src="../../images/<?= htmlspecialchars($p['foto']) ?>" class="adm-prod-img" alt="<?= htmlspecialchars($p['nama']) ?>">
+                  <?php else: ?>
+                  <div class="adm-prod-img" style="background:#e4e2f4;display:flex;align-items:center;justify-content:center;font-size:22px;">📦</div>
+                  <?php endif; ?>
+                  <div>
+                    <div class="adm-prod-name"><?= htmlspecialchars($p['nama']) ?></div>
+                    <div class="adm-prod-sub"><?= htmlspecialchars(mb_strimwidth($p['deskripsi'] ?? '', 0, 36, '...')) ?></div>
+                  </div>
+                </div>
+              </td>
+              <td><?= htmlspecialchars($p['nama_kategori'] ?? '-') ?></td>
+              <td>Rp <?= number_format($p['harga'], 0, ',', '.') ?></td>
+              <td>
+                <?php $stok = $p['stok'] ?? 'tersedia'; ?>
+                <span class="adm-pill <?= $stok === 'tersedia' ? 'adm-pill-acc' : 'adm-pill-tolak' ?>">
+                  <?= $stok === 'tersedia' ? 'Tersedia' : 'Habis' ?>
+                </span>
+              </td>
+              <td>
+                <?php
+                $st = $p['status'];
+                if ($st === 'disetujui' || $st === 'tayang') echo '<span class="adm-pill adm-pill-acc">Tayang</span>';
+                elseif ($st === 'pending') echo '<span class="adm-pill adm-pill-pending">Menunggu</span>';
+                elseif ($st === 'ditolak') echo '<span class="adm-pill adm-pill-tolak">Ditolak</span>';
+                else echo '<span class="adm-pill">' . htmlspecialchars($st) . '</span>';
+                ?>
+              </td>
+              <td>
+                <div class="adm-act-btns">
+                  <button class="adm-btn-edit" onclick="bukaModalStok(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nama'])) ?>', '<?= $stok ?>')">Stok</button>
+                </div>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <?php endif; ?>
+
       <footer class="adm-footer" style="margin-top:auto;">
-        <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
+        <p>© 2026 UMKMify. Platform Digital Promosi UMKM Lokal.</p>
       </footer>
     </main>
   </div>
 
-  <div class="modal-overlay" id="modalDetail" onclick="tutupModalDetail(event)">
-    <div class="modal-box" style="max-width:500px;">
+  <div class="modal-overlay" id="modalStok" onclick="tutupModalStok(event)">
+    <div class="modal-box" style="max-width:420px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div class="modal-title" style="margin-bottom:0;" id="modalNama">—</div>
-        <button onclick="document.getElementById('modalDetail').classList.remove('show')"
+        <div class="modal-title" style="margin-bottom:0;" id="modalStokNama">—</div>
+        <button onclick="document.getElementById('modalStok').classList.remove('show')"
           style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-light);">✕</button>
       </div>
-      <div style="width:100%;height:180px;border-radius:14px;overflow:hidden;margin-bottom:18px;background:#f0eff8;">
-        <img id="modalGambar" src="" alt="" style="width:100%;height:100%;object-fit:cover;">
-      </div>
-      <div style="margin-bottom:18px;">
-        <div class="detail-row">
-          <span class="lbl">Kategori</span>
-          <span class="val" id="modalKategori">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="lbl">Harga</span>
-          <span class="val" id="modalHarga">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="lbl">Status Tayang</span>
-          <span class="val" id="modalStatusTayang">—</span>
-        </div>
-        <div class="detail-row" style="align-items:flex-start;">
-          <span class="lbl">Deskripsi</span>
-          <span class="val" id="modalDeskripsi" style="max-width:60%;line-height:1.5;font-weight:500;">—</span>
-        </div>
-      </div>
       <div style="margin-bottom:20px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Status Ketersediaan</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-mid);margin-bottom:10px;">Status Ketersediaan Stok</div>
         <div class="stok-toggle">
           <label class="toggle-switch">
-            <input type="checkbox" id="toggleStok" onchange="ubahStatusStok(this)">
+            <input type="checkbox" id="toggleStokDash" onchange="labelStokDash(this)">
             <span class="toggle-slider"></span>
           </label>
-          <span id="labelStok">Tersedia</span>
+          <span id="labelStokDash">Tersedia</span>
         </div>
       </div>
-      <div style="display:flex;gap:10px;">
-        <button onclick="document.getElementById('modalDetail').classList.remove('show')" class="prd-btn-cancel" style="flex:1;">Tutup</button>
-        <button onclick="simpanStatusStok()" class="prd-btn-submit" style="flex:1;">Simpan Perubahan</button>
-      </div>
+      <form method="POST" action="DashboardPemilikController.php">
+        <input type="hidden" name="aksi" value="ubah_stok">
+        <input type="hidden" name="id_produk" id="inputIdProdukStok" value="">
+        <input type="hidden" name="stok" id="inputNilaiStok" value="tersedia">
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="document.getElementById('modalStok').classList.remove('show')" class="prd-btn-cancel" style="flex:1;">Batal</button>
+          <button type="submit" class="prd-btn-submit" style="flex:1;">Simpan</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <script>
-    var dataProduk = <?= $produkJson ?>;
-  </script>
-  <script src="../../../js/app.js"></script>
+  <script src="../../js/app.js"></script>
 </body>
 </html>
