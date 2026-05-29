@@ -1,44 +1,8 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../auth/login.php");
-    exit();
-}
-require_once '../../models/koneksi.php';
-
-if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
-    $id = (int)$_GET['hapus'];
-    $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$id]);
-    header("Location: daftar-pengguna.php?hapus=sukses");
-    exit;
-}
-
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$role   = isset($_GET['role'])   ? trim($_GET['role'])   : '';
-
-$sql    = "SELECT id, nama, email, role, created_at FROM users WHERE 1=1";
-$params = [];
-
-if ($search !== '') {
-    $sql .= " AND (nama LIKE ? OR email LIKE ?)";
-    $params[] = '%' . $search . '%';
-    $params[] = '%' . $search . '%';
-}
-if ($role !== '') {
-    $sql .= " AND role = ?";
-    $params[] = $role;
-}
-$sql .= " ORDER BY created_at DESC";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$penggunaList = $stmt->fetchAll();
-
-function rolePill($role) {
-    if ($role === 'admin')    return '<span class="adm-pill" style="background:#eeedf8;color:var(--purple);">Admin</span>';
-    if ($role === 'pemilik')  return '<span class="adm-pill adm-pill-acc">Pemilik UMKM</span>';
-    return '<span class="adm-pill adm-pill-pending">Pengunjung</span>';
-}
+/** @var string   $search */
+/** @var string   $role */
+/** @var array    $penggunaList */
+/** @var callable $rolePill */
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -47,21 +11,21 @@ function rolePill($role) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar Pengguna - UMKMify</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body class="body-admin">
   <div class="adm-layout">
     <aside class="adm-sidebar">
       <div class="adm-logo-text">UMKM<span>ify</span></div>
       <nav class="adm-menu">
-        <a href="../dashboard/dashboard-admin.php" class="adm-nav-link">Dashboard</a>
-        <a href="../produk/persetujuan-produk.php" class="adm-nav-link">Persetujuan Produk</a>
-        <a href="../produk/daftar-produk.php" class="adm-nav-link">Daftar Produk</a>
-        <a href="../umkm/daftar-umkm.php" class="adm-nav-link">Daftar UMKM</a>
-        <a href="daftar-pengguna.php" class="adm-nav-link active">Daftar Pengguna</a>
-        <a href="pengaturan-kategori.php" class="adm-nav-link">Pengaturan Kategori</a>
+        <a href="DashboardAdminController.php" class="adm-nav-link">Dashboard</a>
+        <a href="PersetujuanProdukController.php" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="DaftarProdukController.php" class="adm-nav-link">Daftar Produk</a>
+        <a href="DaftarUMKMController.php" class="adm-nav-link">Daftar UMKM</a>
+        <a href="DaftarPenggunaController.php" class="adm-nav-link active">Daftar Pengguna</a>
+        <a href="PengaturanKategoriController.php" class="adm-nav-link">Pengaturan Kategori</a>
       </nav>
-      <a href="../auth/login.php" class="adm-logout">Keluar Sesi</a>
+      <a href="LogoutController.php" class="adm-logout">Keluar Sesi</a>
     </aside>
     <main class="adm-main">
       <header class="adm-header">
@@ -78,7 +42,7 @@ function rolePill($role) {
       <?php endif; ?>
 
       <div class="adm-toolbar">
-        <form method="GET" action="daftar-pengguna.php" style="display:contents;">
+        <form method="GET" action="DaftarPenggunaController.php" style="display:contents;">
           <div class="adm-search-wrap">
             <input type="text" class="adm-search" name="search" id="searchPengguna"
               placeholder="Cari nama atau email..."
@@ -124,7 +88,7 @@ function rolePill($role) {
               <td>
                 <div class="adm-act-btns">
                   <?php if ($u['role'] !== 'admin'): ?>
-                  <a href="daftar-pengguna.php?hapus=<?= $u['id'] ?>" class="adm-btn-hapus"
+                  <a href="DaftarPenggunaController.php?hapus=<?= $u['id'] ?>" class="adm-btn-hapus"
                      onclick="return confirm('Yakin hapus pengguna ini?')">Hapus</a>
                   <?php else: ?>
                   <span style="color:var(--text-light);font-size:13px;">—</span>
@@ -142,6 +106,6 @@ function rolePill($role) {
       </footer>
     </main>
   </div>
-  <script src="../../../js/app.js"></script>
+  <script src="../../js/app.js"></script>
 </body>
 </html>
