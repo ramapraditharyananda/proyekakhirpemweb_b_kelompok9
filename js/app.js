@@ -766,3 +766,204 @@ function updateWishlistPanel() {
     body.appendChild(item);
   });
 }
+
+function clearWishlist() {
+  if (!confirm('Hapus semua produk dari wishlist?')) return;
+  wishlist = [];
+  updateWishlistCount();
+  updateWishlistPanel();
+  showToast('🗑️ Wishlist dikosongkan');
+}
+
+function toggleWishlist() {
+  var panel = document.getElementById('wishlistPanel');
+  if (panel) panel.classList.toggle('open');
+}
+
+function openReport(umkmName) {
+  currentUmkmName = umkmName;
+  document.getElementById('reportUmkmName').textContent = umkmName;
+  document.querySelectorAll('.report-option').forEach(function(el) { el.classList.remove('selected'); });
+  document.querySelectorAll('input[name="reportReason"]').forEach(function(el) { el.checked = false; });
+  document.getElementById('reportKeterangan').value = '';
+  document.getElementById('modalReport').classList.add('show');
+}
+
+function openReportFromUmkm() {
+  closeModal('modalUmkm');
+  setTimeout(function() { openReport(currentUmkmName); }, 200);
+}
+
+function selectReport(el) {
+  document.querySelectorAll('.report-option').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function submitReport() {
+  var sel = document.querySelector('input[name="reportReason"]:checked');
+  if (!sel) { showToast('⚠️ Pilih alasan pelaporan terlebih dahulu'); return; }
+  closeModal('modalReport');
+  showToast('✅ Laporan berhasil dikirim. Terima kasih!');
+}
+
+function openUmkmDetail(idx) {
+  var u = tokoData[idx];
+  if (!u) return;
+  currentUmkmName = u.nama_toko;
+  currentUmkmWa = u.no_wa || '';
+  document.getElementById('muIcon').textContent = '🏪';
+  document.getElementById('muNama').textContent = u.nama_toko;
+  document.getElementById('muKat').textContent = u.kategori || '-';
+  document.getElementById('muPemilik').textContent = u.pemilik || '-';
+  document.getElementById('muLokasi').textContent = u.alamat || '-';
+  document.getElementById('muJumlah').textContent = (u.jumlah_produk || 0) + ' produk';
+  document.getElementById('muStatus').innerHTML = u.status === 'aktif' || u.status === 'Aktif'
+    ? '<span class="pill-aktif">✓ Aktif</span>'
+    : '<span class="pill-nonaktif">✗ Nonaktif</span>';
+  var produkToko = produkData.filter(function(p) { return p.nama_toko === u.nama_toko; });
+  var list = document.getElementById('muProdukList');
+  list.innerHTML = '';
+  if (produkToko.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text-light);padding:10px 0;">Belum ada produk tayang dari toko ini.</div>';
+  } else {
+    produkToko.forEach(function(p) {
+      var row = document.createElement('div');
+      row.className = 'umkm-produk-row';
+      row.style.cursor = 'pointer';
+      row.onclick = function() { closeModal('modalUmkm'); setTimeout(function() { openProdukDetail(p.id); }, 200); };
+      row.innerHTML = '<span class="umkm-produk-row-name">' + p.nama + '</span><span class="umkm-produk-row-harga">' + formatRupiahPengunjung(p.harga) + '</span>';
+      list.appendChild(row);
+    });
+  }
+  document.getElementById('modalUmkm').classList.add('show');
+}
+
+function hubungiUMKM() {
+  if (!currentUmkmWa) { showToast('Nomor WhatsApp toko tidak tersedia.'); return; }
+  var waClean = currentUmkmWa.replace(/[^0-9]/g, '');
+  window.open('https://wa.me/' + waClean, '_blank');
+}
+
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+function closeModalOutside(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function toggleDropdownProfil(e) {
+  e.stopPropagation();
+  var dp = document.getElementById('dropdownProfil');
+  if (!dp) return;
+  dp.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  var dp = document.getElementById('dropdownProfil');
+  if (dp && dp.classList.contains('open')) {
+    dp.classList.remove('open');
+  }
+});
+
+function bukaModalProfil() {
+  var dp = document.getElementById('dropdownProfil');
+  if (dp) dp.classList.remove('open');
+  var modal = document.getElementById('modalProfil');
+  if (modal) modal.classList.add('show');
+}
+
+function togglePw(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+if (document.getElementById('produkGrid')) {
+  renderProdukBaru();
+  renderProdukPengunjung(produkData);
+  renderUMKM();
+  updateWishlistCount();
+}
+
+function bukaModalStok(id, nama, stokSaat) {
+  var modalEl = document.getElementById('modalStok');
+  if (!modalEl) return;
+  document.getElementById('modalStokNama').textContent = nama;
+  var idInput = document.getElementById('inputIdProdukStok') || document.getElementById('inputIdProduk');
+  var nilaiInput = document.getElementById('inputNilaiStok') || document.getElementById('inputStokVal');
+  var cbId = document.getElementById('toggleStokDash') ? 'toggleStokDash' : 'toggleStokStatus';
+  var lblId = document.getElementById('labelStokDash') ? 'labelStokDash' : 'labelStokStatus';
+  if (idInput) idInput.value = id;
+  var cb = document.getElementById(cbId);
+  if (cb) cb.checked = (stokSaat === 'tersedia');
+  if (nilaiInput) nilaiInput.value = stokSaat;
+  var lbl = document.getElementById(lblId);
+  if (lbl) lbl.textContent = stokSaat === 'tersedia' ? 'Tersedia' : 'Stok Habis';
+  modalEl.classList.add('show');
+}
+
+function labelStokDash(el) {
+  var val = el.checked ? 'tersedia' : 'habis';
+  var nilaiInput = document.getElementById('inputNilaiStok');
+  if (nilaiInput) nilaiInput.value = val;
+  var lbl = document.getElementById('labelStokDash');
+  if (lbl) lbl.textContent = el.checked ? 'Tersedia' : 'Stok Habis';
+}
+
+function handleStokChange(el) {
+  var val = el.checked ? 'tersedia' : 'habis';
+  var nilaiInput = document.getElementById('inputStokVal');
+  if (nilaiInput) nilaiInput.value = val;
+  var lbl = document.getElementById('labelStokStatus');
+  if (lbl) lbl.textContent = el.checked ? 'Tersedia' : 'Stok Habis';
+}
+
+function tutupModalStok(e) {
+  var modalEl = document.getElementById('modalStok');
+  if (e.target === modalEl) {
+    modalEl.classList.remove('show');
+  }
+}
+
+function bukaModalEdit(btn) {
+  var row = btn.closest('tr');
+  document.getElementById('modalKatId').value   = row.dataset.id;
+  document.getElementById('modalKatNama').value = row.dataset.nama;
+  document.getElementById('modalEditKategori').style.display = 'flex';
+}
+
+function tutupModalKat() {
+  document.getElementById('modalEditKategori').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var modalKat = document.getElementById('modalEditKategori');
+  if (modalKat) {
+    modalKat.addEventListener('click', function (e) {
+      if (e.target === this) tutupModalKat();
+    });
+  }
+
+  var modalUMKMAdmin = document.getElementById('modalDetailUMKM');
+  if (modalUMKMAdmin) {
+    modalUMKMAdmin.addEventListener('click', function (e) {
+      if (e.target === this) tutupModalUMKM();
+    });
+  }
+});
