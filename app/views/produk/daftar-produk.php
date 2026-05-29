@@ -1,60 +1,9 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../auth/login.php");
-    exit();
-}
-require_once '../../../app/models/koneksi.php';
-
-$search   = isset($_GET['search'])   ? trim($_GET['search'])   : '';
-$kategori = isset($_GET['kategori']) ? trim($_GET['kategori']) : '';
-$status   = isset($_GET['status'])   ? trim($_GET['status'])   : '';
-
-$sql = "
-    SELECT p.id, p.nama, p.harga, p.foto, p.status, p.deskripsi,
-           t.nama_toko, k.nama AS kategori_nama
-    FROM produk p
-    LEFT JOIN toko t ON p.toko_id = t.id
-    LEFT JOIN kategori k ON p.kategori_id = k.id
-    WHERE 1=1
-";
-$params = [];
-
-if ($search !== '') {
-    $sql .= " AND (p.nama LIKE ? OR t.nama_toko LIKE ?)";
-    $params[] = '%' . $search . '%';
-    $params[] = '%' . $search . '%';
-}
-if ($kategori !== '') {
-    $sql .= " AND k.nama = ?";
-    $params[] = $kategori;
-}
-if ($status !== '') {
-    $sql .= " AND p.status = ?";
-    $params[] = $status;
-}
-$sql .= " ORDER BY p.created_at DESC";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$produkList = $stmt->fetchAll();
-
-$stmtKat = $pdo->query("SELECT nama FROM kategori ORDER BY nama ASC");
-$kategoriList = $stmtKat->fetchAll();
-
-function statusPill($status) {
-    if ($status === 'disetujui') return '<span class="adm-pill adm-pill-acc">Tayang</span>';
-    if ($status === 'pending')   return '<span class="adm-pill adm-pill-pending">Menunggu ACC</span>';
-    if ($status === 'ditolak')   return '<span class="adm-pill adm-pill-tolak">Ditolak</span>';
-    return '<span class="adm-pill">' . htmlspecialchars($status) . '</span>';
-}
-
-function statusLabel($status) {
-    if ($status === 'disetujui') return 'Tayang';
-    if ($status === 'pending')   return 'Menunggu ACC';
-    if ($status === 'ditolak')   return 'Ditolak';
-    return $status;
-}
+/** @var string $search */
+/** @var string $status */
+/** @var string $kategori */
+/** @var array  $produkList */
+/** @var array  $kategoriList */
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -63,21 +12,21 @@ function statusLabel($status) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar Produk - UMKMify</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body class="body-admin">
   <div class="adm-layout">
     <aside class="adm-sidebar">
       <div class="adm-logo-text">UMKM<span>ify</span></div>
       <nav class="adm-menu">
-        <a href="../dashboard/dashboard-admin.php" class="adm-nav-link">Dashboard</a>
-        <a href="persetujuan-produk.php" class="adm-nav-link">Persetujuan Produk</a>
-        <a href="daftar-produk.php" class="adm-nav-link active">Daftar Produk</a>
-        <a href="../umkm/daftar-umkm.php" class="adm-nav-link">Daftar UMKM</a>
-        <a href="../pengguna/daftar-pengguna.php" class="adm-nav-link">Daftar Pengguna</a>
-        <a href="../pengguna/pengaturan-kategori.php" class="adm-nav-link">Pengaturan Kategori</a>
+        <a href="DashboardAdminController.php" class="adm-nav-link">Dashboard</a>
+        <a href="PersetujuanProdukController.php" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="DaftarProdukController.php" class="adm-nav-link active">Daftar Produk</a>
+        <a href="DaftarUmkmController.php" class="adm-nav-link">Daftar UMKM</a>
+        <a href="DaftarPenggunaController.php" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="PengaturanKategoriController.php" class="adm-nav-link">Pengaturan Kategori</a>
       </nav>
-      <a href="../auth/login.php" class="adm-logout">Keluar Sesi</a>
+      <a href="LogoutController.php" class="adm-logout">Keluar Sesi</a>
     </aside>
     <main class="adm-main">
       <header class="adm-header">
@@ -94,7 +43,7 @@ function statusLabel($status) {
       <?php endif; ?>
 
       <div class="adm-toolbar">
-        <form method="GET" action="daftar-produk.php" style="display:contents;">
+        <form method="GET" action="DaftarProdukController.php" style="display:contents;">
           <div class="adm-search-wrap">
             <input type="text" class="adm-search" name="search" id="searchProduk"
               placeholder="Cari nama produk atau UMKM..."
@@ -148,7 +97,7 @@ function statusLabel($status) {
               <td>
                 <div class="adm-prod-cell">
                   <?php if (!empty($p['foto'])): ?>
-                  <img src="../../../images/<?= htmlspecialchars($p['foto']) ?>" class="adm-prod-img" alt="<?= htmlspecialchars($p['nama']) ?>">
+                  <img src="../../images/<?= htmlspecialchars($p['foto']) ?>" class="adm-prod-img" alt="<?= htmlspecialchars($p['nama']) ?>">
                   <?php else: ?>
                   <div class="adm-prod-img" style="background:#e4e2f4;display:flex;align-items:center;justify-content:center;font-size:22px;">📦</div>
                   <?php endif; ?>
@@ -164,7 +113,7 @@ function statusLabel($status) {
               <td><?= statusPill($p['status']) ?></td>
               <td>
                 <div class="adm-act-btns">
-                  <a href="hapus-produk.php?id=<?= $p['id'] ?>" class="adm-btn-hapus"
+                  <a href="HapusProdukController.php?id=<?= $p['id'] ?>" class="adm-btn-hapus"
                      onclick="return confirm('Yakin hapus produk ini?')">Hapus</a>
                 </div>
               </td>
@@ -179,6 +128,6 @@ function statusLabel($status) {
       </footer>
     </main>
   </div>
-  <script src="../../../js/app.js"></script>
+  <script src="../../js/app.js"></script>
 </body>
 </html>
