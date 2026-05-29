@@ -1,6 +1,6 @@
 <?php
 $host     = "localhost";
-$dbname   = "database_sql";
+$dbname   = "umkmify";
 $username = "root";
 $password = "";
 
@@ -11,3 +11,11 @@ try {
 } catch (PDOException $e) {
     die(json_encode(["error" => "Koneksi gagal: " . $e->getMessage()]));
 }
+
+$timeout = 300;
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout) {
+    session_destroy();
+    header("Location: ../auth/login.php");
+    exit();
+}
+$_SESSION['last_activity'] = time();
