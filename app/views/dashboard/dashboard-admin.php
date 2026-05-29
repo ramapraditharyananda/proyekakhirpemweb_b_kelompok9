@@ -1,32 +1,9 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../auth/login.php");
-    exit();
-}
-require_once '../../../app/models/koneksi.php';
-
-$stmtPengguna = $pdo->query("SELECT COUNT(*) AS total FROM users");
-$totalPengguna = $stmtPengguna->fetch()['total'];
-
-$stmtUMKM = $pdo->query("SELECT COUNT(*) AS total FROM toko");
-$totalUMKM = $stmtUMKM->fetch()['total'];
-
-$stmtTayang = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'disetujui'");
-$totalTayang = $stmtTayang->fetch()['total'];
-
-$stmtMenunggu = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'pending'");
-$totalMenunggu = $stmtMenunggu->fetch()['total'];
-
-$stmtProdukTerbaru = $pdo->query("
-    SELECT p.*, k.nama AS nama_kategori, t.nama_toko
-    FROM produk p
-    LEFT JOIN kategori k ON p.kategori_id = k.id
-    LEFT JOIN toko t ON p.toko_id = t.id
-    ORDER BY p.created_at DESC
-    LIMIT 3
-");
-$produkTerbaru = $stmtProdukTerbaru->fetchAll();
+/** @var int   $totalPengguna */
+/** @var int   $totalUMKM */
+/** @var int   $totalTayang */
+/** @var int   $totalMenunggu */
+/** @var array $produkTerbaru */
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -35,21 +12,21 @@ $produkTerbaru = $stmtProdukTerbaru->fetchAll();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Admin - UMKMify</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css?v=4">
 </head>
 <body class="body-admin">
   <div class="adm-layout">
     <aside class="adm-sidebar">
       <div class="adm-logo-text">UMKM<span>ify</span></div>
       <nav class="adm-menu">
-        <a href="dashboard-admin.php" class="adm-nav-link active">Dashboard</a>
-        <a href="../produk/persetujuan-produk.php" class="adm-nav-link">Persetujuan Produk</a>
-        <a href="../produk/daftar-produk.php" class="adm-nav-link">Daftar Produk</a>
-        <a href="../umkm/daftar-umkm.php" class="adm-nav-link">Daftar UMKM</a>
-        <a href="../pengguna/daftar-pengguna.php" class="adm-nav-link">Daftar Pengguna</a>
-        <a href="../pengguna/pengaturan-kategori.php" class="adm-nav-link">Pengaturan Kategori</a>
+        <a href="DashboardAdminController.php" class="adm-nav-link active">Dashboard</a>
+        <a href="PersetujuanProdukController.php" class="adm-nav-link">Persetujuan Produk</a>
+        <a href="DaftarProdukController.php" class="adm-nav-link">Daftar Produk</a>
+        <a href="DaftarUMKMController.php" class="adm-nav-link">Daftar UMKM</a>
+        <a href="DaftarPenggunaController.php" class="adm-nav-link">Daftar Pengguna</a>
+        <a href="PengaturanKategoriController.php" class="adm-nav-link">Pengaturan Kategori</a>
       </nav>
-      <a href="../auth/login.php" class="adm-logout">Keluar Sesi</a>
+      <a href="LogoutController.php" class="adm-logout">Keluar Sesi</a>
     </aside>
     <main class="adm-main">
       <header class="adm-header">
@@ -59,19 +36,19 @@ $produkTerbaru = $stmtProdukTerbaru->fetchAll();
         </div>
       </header>
       <div class="adm-stats">
-        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='../pengguna/daftar-pengguna.php'">
+        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='DaftarPenggunaController.php'">
           <div class="adm-stat-label">Total Pengguna</div>
           <div class="adm-stat-val adm-stat-gold"><?= $totalPengguna ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='../umkm/daftar-umkm.php'">
+        <div class="adm-stat adm-stat-click" onclick="location.href='DaftarUMKMController.php'">
           <div class="adm-stat-label">Total UMKM</div>
-          <div class="adm-stat-val"><?= $totalUMKM ?></div>
+          <div class="adm-stat-val adm-stat-gold"><?= $totalUMKM ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/daftar-produk.php'">
+        <div class="adm-stat adm-stat-click" onclick="location.href='DaftarProdukController.php'">
           <div class="adm-stat-label">Total Produk Tayang</div>
           <div class="adm-stat-val"><?= $totalTayang ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='../produk/persetujuan-produk.php'">
+        <div class="adm-stat adm-stat-click" onclick="location.href='PersetujuanProdukController.php'">
           <div class="adm-stat-label">Menunggu Persetujuan</div>
           <div class="adm-stat-val" style="color:#e67e22;"><?= $totalMenunggu ?></div>
         </div>
@@ -84,7 +61,7 @@ $produkTerbaru = $stmtProdukTerbaru->fetchAll();
           <?php foreach ($produkTerbaru as $p): ?>
             <div class="adm-card">
               <?php if (!empty($p['foto'])): ?>
-              <img src="../../../images/<?= htmlspecialchars($p['foto']) ?>" alt="<?= htmlspecialchars($p['nama']) ?>">
+              <img src="../../images/<?= htmlspecialchars($p['foto']) ?>" alt="<?= htmlspecialchars($p['nama']) ?>">
               <?php else: ?>
               <div style="width:100%;height:180px;background:#e4e2f4;display:flex;align-items:center;justify-content:center;font-size:40px;">📦</div>
               <?php endif; ?>
@@ -96,7 +73,7 @@ $produkTerbaru = $stmtProdukTerbaru->fetchAll();
                     <div class="adm-prod-sub" style="color:rgba(255,255,255,0.6);font-size:11px;"><?= htmlspecialchars($p['nama_toko'] ?? '-') ?></div>
                   </div>
                   <div class="adm-card-actions">
-                    <button class="adm-btn" onclick="location.href='../produk/persetujuan-produk.php'">Tinjau <?php if ($p['status'] === 'pending'): ?><span class="adm-pending-count">!</span><?php endif; ?></button>
+                    <button class="adm-btn" onclick="location.href='PersetujuanProdukController.php'">Tinjau <?php if ($p['status'] === 'pending'): ?><span class="adm-pending-count">!</span><?php endif; ?></button>
                   </div>
                 </div>
               </div>
@@ -109,6 +86,6 @@ $produkTerbaru = $stmtProdukTerbaru->fetchAll();
       </footer>
     </main>
   </div>
-  <script src="../../../js/app.js"></script>
+  <script src="../../../js/app.js?v=4"></script>
 </body>
 </html>
