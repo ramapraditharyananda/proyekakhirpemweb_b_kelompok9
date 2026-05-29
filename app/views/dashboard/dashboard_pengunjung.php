@@ -1,49 +1,17 @@
 <?php
-session_start();
-require_once '../../../app/models/koneksi.php';
-
-$namaUser = $_SESSION['nama'] ?? 'Pengunjung';
-$inisial   = strtoupper(substr($namaUser, 0, 1));
-
-$stmtTayang = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'disetujui'");
-$totalTayang = $stmtTayang->fetch()['total'];
-
-$stmtUMKM = $pdo->query("SELECT COUNT(*) AS total FROM toko");
-$totalUMKM = $stmtUMKM->fetch()['total'];
-
-$stmtKategori = $pdo->query("SELECT COUNT(*) AS total FROM kategori");
-$totalKategori = $stmtKategori->fetch()['total'];
-
-$stmtProduk = $pdo->query("
-    SELECT p.id, p.nama, p.harga, p.deskripsi, p.foto,
-           k.nama AS kategori,
-           t.nama_toko, t.no_wa, t.alamat AS lokasi
-    FROM produk p
-    LEFT JOIN kategori k ON p.kategori_id = k.id
-    LEFT JOIN toko t ON p.toko_id = t.id
-    WHERE p.status = 'disetujui'
-    ORDER BY p.created_at DESC
-");
-$produkList = $stmtProduk->fetchAll();
-
-$stmtToko = $pdo->query("
-    SELECT t.id, t.nama_toko, t.kategori, t.alamat, t.deskripsi, t.status,
-           u.nama AS pemilik,
-           COUNT(p.id) AS jumlah_produk
-    FROM toko t
-    LEFT JOIN users u ON t.user_id = u.id
-    LEFT JOIN produk p ON p.toko_id = t.id AND p.status = 'disetujui'
-    GROUP BY t.id
-    ORDER BY t.created_at DESC
-");
-$tokoList = $stmtToko->fetchAll();
-
-$stmtKatList = $pdo->query("SELECT * FROM kategori ORDER BY nama ASC");
-$kategoriList = $stmtKatList->fetchAll();
-
-$produkJson   = json_encode(array_values($produkList), JSON_UNESCAPED_UNICODE);
-$tokoJson     = json_encode(array_values($tokoList), JSON_UNESCAPED_UNICODE);
-$kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE);
+/** @var string $inisial */
+/** @var string $namaUser */
+/** @var string $emailUser */
+/** @var string $pesan */
+/** @var string $pesanTipe */
+/** @var int    $totalTayang */
+/** @var int    $totalUMKM */
+/** @var int    $totalKategori */
+/** @var array  $kategoriList */
+/** @var string $produkJson */
+/** @var string $tokoJson */
+/** @var string $kategoriJson */
+/** @var string $produkBaruJson */
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -52,14 +20,15 @@ $kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE)
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jelajah Produk - UMKMify</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
 
   <nav class="nav">
     <span class="nav-logo-text">UMKM<span>ify</span></span>
     <div class="nav-links">
-      <a href="#produk" class="active">Produk</a>
+      <a href="#beranda" class="active">Beranda</a>
+      <a href="#produk">Produk</a>
       <a href="#umkm">UMKM</a>
     </div>
     <div class="nav-right">
@@ -67,19 +36,32 @@ $kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE)
         ❤️
         <span class="nav-wishlist-count" id="wishlistCount">0</span>
       </button>
-      <div class="nav-user">
+      <div class="nav-user" style="cursor:pointer;" onclick="toggleDropdownProfil(event)">
         <div class="nav-avatar"><?= htmlspecialchars($inisial) ?></div>
         <span><?= htmlspecialchars($namaUser) ?></span>
+        <span style="font-size:10px;margin-left:2px;">▾</span>
+      </div>
+      <div class="dropdown-profil" id="dropdownProfil">
+        <div class="dp-item dp-header">
+          <div class="dp-avatar"><?= htmlspecialchars($inisial) ?></div>
+          <div>
+            <div class="dp-nama"><?= htmlspecialchars($namaUser) ?></div>
+            <div class="dp-email"><?= htmlspecialchars($emailUser) ?></div>
+          </div>
+        </div>
+        <hr class="dp-divider">
+        <button class="dp-item dp-btn" onclick="bukaModalProfil()">✏️ Edit Profil</button>
+        <a href="LogoutController.php" class="dp-item dp-btn dp-logout">🚪 Keluar</a>
       </div>
     </div>
   </nav>
 
-  <div class="hero">
+  <div class="hero" id="beranda">
     <h1>Produk Lokal <span>Lampung</span></h1>
     <p>Temukan ribuan produk UMKM unggulan dari seluruh penjuru Lampung.</p>
     <div class="hero-search">
       <input type="text" id="searchInput" placeholder="Cari produk atau nama toko..." oninput="filterProduk()">
-      <button onclick="filterProduk()">🔍 Cari</button>
+      <button onclick="filterProduk()">Cari</button>
     </div>
     <div class="hero-stats">
       <div class="hero-stat">
@@ -98,19 +80,43 @@ $kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE)
   </div>
 
   <div class="container">
+
+    <?php if ($pesan): ?>
+    <div class="alert-banner alert-<?= $pesanTipe ?>">
+      <?= htmlspecialchars($pesan) ?>
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;margin-left:8px;font-size:16px;">✕</button>
+    </div>
+    <?php endif; ?>
+
+    <div class="section-produk-baru">
+      <div class="section-head">
+        <h2 class="section-title-inline">Produk Terbaru</h2>
+        <a href="#produk" class="lihat-semua-link">Lihat Semua →</a>
+      </div>
+      <div class="produk-baru-scroll" id="produkBaruScroll"></div>
+    </div>
+
     <div class="filter-bar" id="produk">
-      <div class="filter-chips">
+      <div class="filter-chips" id="filterChips">
         <button class="filter-chip active" onclick="setFilter(this, '')">Semua</button>
         <?php foreach ($kategoriList as $kat): ?>
-          <button class="filter-chip" onclick="setFilter(this, '<?= htmlspecialchars($kat['nama']) ?>')"><?= htmlspecialchars($kat['ikon'] ?? '') ?> <?= htmlspecialchars($kat['nama']) ?></button>
+          <button class="filter-chip" onclick="setFilter(this, '<?= htmlspecialchars($kat['nama']) ?>')">
+            <?= htmlspecialchars($kat['nama']) ?>
+          </button>
         <?php endforeach; ?>
       </div>
-      <select class="sort-select" onchange="sortProduk(this.value)">
-        <option value="">Urutkan</option>
-        <option value="harga-asc">Harga Terendah</option>
-        <option value="harga-desc">Harga Tertinggi</option>
-        <option value="nama-asc">Nama A-Z</option>
-      </select>
+      <div class="filter-bar-right">
+        <select class="sort-select" onchange="sortProduk(this.value)">
+          <option value="">Urutkan</option>
+          <option value="harga-asc">Harga Terendah</option>
+          <option value="harga-desc">Harga Tertinggi</option>
+          <option value="nama-asc">Nama A-Z</option>
+        </select>
+        <div class="view-toggle">
+          <button class="view-btn active" id="viewGrid" onclick="setView('grid')" title="Grid">⊞</button>
+          <button class="view-btn" id="viewList" onclick="setView('list')" title="List">≡</button>
+        </div>
+      </div>
     </div>
 
     <div class="produk-grid" id="produkGrid">
@@ -122,11 +128,32 @@ $kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE)
     </div>
 
     <h2 class="section-title" id="umkm">UMKM Terdaftar</h2>
+    <div class="umkm-filter-bar">
+      <input type="text" class="umkm-search-input" id="umkmSearchInput" placeholder="Cari nama toko..." oninput="filterUMKM()">
+      <select class="sort-select" id="umkmKategoriFilter" onchange="filterUMKM()">
+        <option value="">Semua Kategori</option>
+        <?php foreach ($kategoriList as $kat): ?>
+          <option value="<?= htmlspecialchars($kat['nama']) ?>"><?= htmlspecialchars($kat['nama']) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
     <div class="umkm-grid" id="umkmGrid"></div>
+
   </div>
 
   <footer class="user-footer">
-    <p>© 2026 <strong>UMKMify</strong>. Platform Digital UMKM Lokal Lampung.</p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="nav-logo-text" style="font-size:20px;">UMKM<span>ify</span></span>
+        <p>Platform Digital UMKM Lokal Lampung</p>
+      </div>
+      <div class="footer-links">
+        <a href="#beranda">Beranda</a>
+        <a href="#produk">Produk</a>
+        <a href="#umkm">UMKM</a>
+      </div>
+    </div>
+    <div class="footer-copy">© 2026 <strong>UMKMify</strong>. Semua hak dilindungi.</div>
   </footer>
 
   <div class="modal-overlay" id="modalDetail" onclick="closeModalOutside(event, 'modalDetail')">
@@ -255,7 +282,7 @@ $kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE)
         <div class="umkm-produk-list" id="muProdukList"></div>
       </div>
       <div class="modal-umkm-actions">
-        <button class="btn-contact-umkm" onclick="alert('Menghubungi via WhatsApp...')">💬 Hubungi Toko</button>
+        <button class="btn-contact-umkm" id="muWaBtn" onclick="hubungiUMKM()">💬 Hubungi Toko</button>
         <button class="btn-laporkan-umkm" onclick="openReportFromUmkm()">🚩 Laporkan</button>
       </div>
     </div>
@@ -272,15 +299,63 @@ $kategoriJson = json_encode(array_values($kategoriList), JSON_UNESCAPED_UNICODE)
         <p>Belum ada produk yang disimpan.<br>Klik ❤️ pada produk favorit Anda!</p>
       </div>
     </div>
+    <div class="wishlist-footer" id="wishlistFooter" style="display:none;">
+      <button class="btn-wishlist-clear" onclick="clearWishlist()">🗑️ Hapus Semua</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalProfil" onclick="closeModalOutside(event, 'modalProfil')">
+    <div class="modal-profil">
+      <div class="modal-profil-header">
+        <div class="modal-profil-avatar"><?= htmlspecialchars($inisial) ?></div>
+        <div>
+          <div class="modal-profil-title">Edit Profil</div>
+          <div class="modal-profil-sub">Perbarui informasi akun Anda</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modalProfil')" style="margin-left:auto;">✕</button>
+      </div>
+      <form method="POST" action="" id="formEditProfil">
+        <input type="hidden" name="aksi" value="edit_profil">
+        <div class="profil-form-group">
+          <label class="profil-label">Nama Lengkap</label>
+          <input type="text" name="nama" class="profil-input" value="<?= htmlspecialchars($namaUser) ?>" required placeholder="Masukkan nama lengkap">
+        </div>
+        <div class="profil-form-group">
+          <label class="profil-label">Email</label>
+          <input type="email" name="email" class="profil-input" value="<?= htmlspecialchars($emailUser) ?>" required placeholder="Masukkan email">
+        </div>
+        <hr class="profil-divider">
+        <div class="profil-section-label">Ganti Password <span style="font-size:11px;color:var(--text-light);font-weight:400;">(Opsional — kosongkan jika tidak ingin mengubah)</span></div>
+        <div class="profil-form-group">
+          <label class="profil-label">Password Lama</label>
+          <div class="profil-input-wrap">
+            <input type="password" name="pw_lama" id="pwLama" class="profil-input" placeholder="Masukkan password lama">
+            <button type="button" class="profil-eye" onclick="togglePw('pwLama', this)">👁</button>
+          </div>
+        </div>
+        <div class="profil-form-group">
+          <label class="profil-label">Password Baru</label>
+          <div class="profil-input-wrap">
+            <input type="password" name="pw_baru" id="pwBaru" class="profil-input" placeholder="Masukkan password baru">
+            <button type="button" class="profil-eye" onclick="togglePw('pwBaru', this)">👁</button>
+          </div>
+        </div>
+        <div class="profil-actions">
+          <button type="button" class="btn-profil-cancel" onclick="closeModal('modalProfil')">Batal</button>
+          <button type="submit" class="btn-profil-save">💾 Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    var produkData   = <?= $produkJson ?>;
-    var tokoData     = <?= $tokoJson ?>;
-    var kategoriData = <?= $kategoriJson ?>;
+    var produkData     = <?= $produkJson ?>;
+    var tokoData       = <?= $tokoJson ?>;
+    var kategoriData   = <?= $kategoriJson ?>;
+    var produkBaruData = <?= $produkBaruJson ?>;
   </script>
-  <script src="../../../js/app.js"></script>
+  <script src="../../js/app.js"></script>
 </body>
 </html>
