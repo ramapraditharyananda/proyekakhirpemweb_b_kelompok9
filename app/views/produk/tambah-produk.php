@@ -1,73 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'pemilik') {
-    header("Location: ../auth/login.php");
-    exit();
-}
-require_once '../../../app/models/koneksi.php';
-
-if (!isset($_SESSION['toko_id'])) {
-    $stmtToko = $pdo->prepare("SELECT id FROM toko WHERE user_id = ? LIMIT 1");
-    $stmtToko->execute([$_SESSION['user_id']]);
-    $tokoRow = $stmtToko->fetch();
-    if ($tokoRow) {
-        $_SESSION['toko_id'] = $tokoRow['id'];
-    } else {
-        $namaToko = 'Toko ' . ($_SESSION['nama'] ?? 'Pemilik');
-        $stmtBuat = $pdo->prepare("INSERT INTO toko (user_id, nama_toko, kategori, alamat, no_wa, deskripsi, status, created_at) VALUES (?, ?, '', '', '', '', 'aktif', NOW())");
-        $stmtBuat->execute([$_SESSION['user_id'], $namaToko]);
-        $_SESSION['toko_id'] = $pdo->lastInsertId();
-    }
-}
-
-$errors = [];
-$sukses = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama      = trim($_POST['namaProduk'] ?? '');
-    $kategori  = trim($_POST['kategori'] ?? '');
-    $harga     = trim($_POST['harga'] ?? '');
-    $deskripsi = trim($_POST['deskripsi'] ?? '');
-    $tokoId    = $_SESSION['toko_id'];
-
-    if ($nama === '')      $errors['nama']      = 'Nama produk wajib diisi.';
-    if ($kategori === '')  $errors['kategori']  = 'Pilih kategori produk.';
-    if ($harga === '' || (int)$harga < 0) $errors['harga'] = 'Harga wajib diisi dan tidak boleh negatif.';
-    if ($deskripsi === '') $errors['deskripsi'] = 'Deskripsi produk wajib diisi.';
-
-    $fotoNama = null;
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $ext     = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        if (!in_array($ext, $allowed)) {
-            $errors['foto'] = 'Format gambar tidak didukung (PNG, JPG, WEBP).';
-        } elseif ($_FILES['foto']['size'] > 5 * 1024 * 1024) {
-            $errors['foto'] = 'Ukuran gambar maksimal 5 MB.';
-        } else {
-            $fotoNama = uniqid('produk_') . '.' . $ext;
-            if (!move_uploaded_file($_FILES['foto']['tmp_name'], '../../../images/' . $fotoNama)) {
-                $errors['foto'] = 'Gagal mengunggah gambar.';
-            }
-        }
-    }
-
-    if (empty($errors)) {
-        $stmtKat = $pdo->prepare("SELECT id FROM kategori WHERE nama = ? LIMIT 1");
-        $stmtKat->execute([$kategori]);
-        $katRow     = $stmtKat->fetch();
-        $kategoriId = $katRow ? $katRow['id'] : null;
-
-        $pdo->prepare("
-            INSERT INTO produk (toko_id, nama, kategori_id, harga, deskripsi, foto, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
-        ")->execute([$tokoId, $nama, $kategoriId, (int)$harga, $deskripsi, $fotoNama]);
-
-        $sukses = true;
-    }
-}
-
-$stmtKat = $pdo->query("SELECT nama FROM kategori ORDER BY nama ASC");
-$kategoriList = $stmtKat->fetchAll();
+/** @var bool   $sukses */
+/** @var array  $errors */
+/** @var array  $kategoriList */
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -76,26 +10,30 @@ $kategoriList = $stmtKat->fetchAll();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tambah Produk - UMKMify</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body class="body-admin">
   <div class="adm-layout">
     <aside class="adm-sidebar">
       <div class="adm-logo-text">UMKM<span>ify</span></div>
       <nav class="adm-menu">
-        <a href="../dashboard/dashboard-pemilik.php" class="adm-nav-link">Dashboard</a>
-        <a href="tambah-produk.php" class="adm-nav-link active">Tambah Produk</a>
+        <a href="DashboardPemilikController.php" class="adm-nav-link">Dashboard</a>
+        <a href="TambahProdukController.php" class="adm-nav-link active">Tambah Produk</a>
+        <a href="StatusProdukController.php" class="adm-nav-link">Status Produk</a>
+        <a href="EditProfilPemilikController.php" class="adm-nav-link">Edit Profil</a>
       </nav>
-      <a href="../auth/login.php" class="adm-logout">Keluar Sesi</a>
+      <a href="LogoutController.php" class="adm-logout">Keluar Sesi</a>
     </aside>
     <main class="adm-main" style="display:flex;flex-direction:column;">
       <header class="adm-header">
-        <h2>Tambah Produk Baru</h2>
-        <p>Isi detail produk untuk diajukan ke admin.</p>
+        <div class="adm-header-text">
+          <h2>Tambah Produk Baru</h2>
+          <p>Isi detail produk untuk diajukan ke admin.</p>
+        </div>
       </header>
 
       <?php if ($sukses): ?>
-      <div style="background:#d4edda;color:#155724;padding:14px 18px;border-radius:10px;margin-bottom:16px;font-size:14px;">
+      <div class="notif-sukses">
         Produk berhasil diajukan dan sedang menunggu persetujuan admin.
       </div>
       <?php endif; ?>
@@ -103,8 +41,9 @@ $kategoriList = $stmtKat->fetchAll();
       <div class="prd-notice">
         ⚠️ Produk yang Anda tambahkan akan ditinjau oleh admin terlebih dahulu sebelum ditampilkan ke pengunjung.
       </div>
+
       <div class="adm-form-card">
-        <form id="formTambahProduk" method="POST" action="tambah-produk.php" enctype="multipart/form-data">
+        <form id="formTambahProduk" method="POST" action="TambahProdukController.php" enctype="multipart/form-data">
           <div class="prd-form-grid">
             <div class="prd-form-full">
               <label class="prd-label">Foto Produk</label>
@@ -182,11 +121,12 @@ $kategoriList = $stmtKat->fetchAll();
           </div>
         </form>
       </div>
+
       <footer class="adm-footer" style="margin-top:auto;">
         <p>© 2026 UMKMify. Platform Digital UMKM Lokal Lampung.</p>
       </footer>
     </main>
   </div>
-  <script src="../../../js/app.js"></script>
+  <script src="../../js/app.js"></script>
 </body>
 </html>
