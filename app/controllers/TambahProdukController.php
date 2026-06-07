@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $kategori  = trim($_POST['kategori'] ?? '');
     $harga     = trim($_POST['harga'] ?? '');
     $deskripsi = trim($_POST['deskripsi'] ?? '');
+    $stok      = ($_POST['stok'] ?? 'tersedia') === 'habis' ? 'habis' : 'tersedia';
     $tokoId    = $_SESSION['toko_id'];
 
     if ($nama === '')      $errors['nama']      = 'Nama produk wajib diisi.';
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors['foto'] = 'Ukuran gambar maksimal 5 MB.';
         } else {
             $fotoNama = uniqid('produk_') . '.' . $ext;
-            if (!move_uploaded_file($_FILES['foto']['tmp_name'], '../../../images/' . $fotoNama)) {
+            if (!move_uploaded_file($_FILES['foto']['tmp_name'], '../../images/' . $fotoNama)) {
                 $errors['foto'] = 'Gagal mengunggah gambar.';
             }
         }
@@ -65,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $kategoriId = $katRow ? $katRow['id'] : null;
 
         $pdo->prepare("
-            INSERT INTO produk (toko_id, nama, kategori_id, harga, deskripsi, foto, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
-        ")->execute([$tokoId, $nama, $kategoriId, (int)$harga, $deskripsi, $fotoNama]);
+            INSERT INTO produk (toko_id, nama, kategori_id, harga, deskripsi, foto, ketersediaan, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+        ")->execute([$tokoId, $nama, $kategoriId, (int)$harga, $deskripsi, $fotoNama, $stok]);
 
         $sukses = true;
     }
