@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
     if ($_POST['aksi'] === 'ubah_stok') {
         $id_produk = (int)($_POST['id_produk'] ?? 0);
         $stok_baru = ($_POST['stok'] === 'tersedia') ? 'tersedia' : 'habis';
-        $stmt = $pdo->prepare("UPDATE produk SET stok = ? WHERE id = ? AND toko_id IN (SELECT id FROM toko WHERE user_id = ?)");
+        $stmt = $pdo->prepare("UPDATE produk SET ketersediaan = ? WHERE id = ? AND toko_id IN (SELECT id FROM toko WHERE user_id = ?)");
         $stmt->execute([$stok_baru, $id_produk, $id_user]);
         header("Location: StatusProdukController.php");
         exit;
@@ -51,7 +51,7 @@ $params = [$toko_id];
 
 if ($filterStatus !== '') {
     if ($filterStatus === 'tayang') {
-        $sql .= " AND (p.status = 'disetujui' OR p.status = 'tayang')";
+        $sql .= " AND p.status = 'tayang'";
     } else {
         $sql .= " AND p.status = ?";
         $params[] = $filterStatus;
@@ -71,7 +71,7 @@ $jumlahTayang   = 0;
 $jumlahMenunggu = 0;
 $jumlahDitolak  = 0;
 foreach ($produkList as $p) {
-    if ($p['status'] === 'disetujui' || $p['status'] === 'tayang') $jumlahTayang++;
+    if ($p['status'] === 'tayang') $jumlahTayang++;
     if ($p['status'] === 'pending')  $jumlahMenunggu++;
     if ($p['status'] === 'ditolak')  $jumlahDitolak++;
 }
