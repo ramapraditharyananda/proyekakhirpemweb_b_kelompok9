@@ -66,11 +66,18 @@ function labelStatus($status) {
 }
 
 function waktuRelatif($datetime) {
-    $diff = time() - strtotime($datetime);
-    if ($diff < 3600)    return floor($diff / 60) . ' menit lalu';
-    if ($diff < 86400)   return floor($diff / 3600) . ' jam lalu';
+    $timestamp = strtotime($datetime);
+    if (!$timestamp) return '-';
+
+    $diff = time() - $timestamp;
+    if ($diff < 0) $diff = 0;
+
+    if ($diff < 60) return 'baru saja';
+    if ($diff < 3600) return floor($diff / 60) . ' menit lalu';
+    if ($diff < 86400) return floor($diff / 3600) . ' jam lalu';
     if ($diff < 2592000) return floor($diff / 86400) . ' hari lalu';
-    return date('d M Y', strtotime($datetime));
+
+    return date('d M Y', $timestamp);
 }
 
 require_once '../views/produk/persetujuan-produk.php';
