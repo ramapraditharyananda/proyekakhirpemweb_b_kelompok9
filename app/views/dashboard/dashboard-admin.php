@@ -36,19 +36,19 @@
         </div>
       </header>
       <div class="adm-stats">
-        <div class="adm-stat adm-stat-purple adm-stat-click" onclick="location.href='DaftarPenggunaController.php'">
+        <div class="adm-stat adm-stat-purple">
           <div class="adm-stat-label">Total Pengguna</div>
           <div class="adm-stat-val adm-stat-gold"><?= $totalPengguna ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='DaftarUMKMController.php'">
+        <div class="adm-stat">
           <div class="adm-stat-label">Total UMKM</div>
           <div class="adm-stat-val adm-stat-gold"><?= $totalUMKM ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='DaftarProdukController.php'">
+        <div class="adm-stat">
           <div class="adm-stat-label">Total Produk Tayang</div>
           <div class="adm-stat-val"><?= $totalTayang ?></div>
         </div>
-        <div class="adm-stat adm-stat-click" onclick="location.href='PersetujuanProdukController.php'">
+        <div class="adm-stat">
           <div class="adm-stat-label">Menunggu Persetujuan</div>
           <div class="adm-stat-val" style="color:#e67e22;"><?= $totalMenunggu ?></div>
         </div>
