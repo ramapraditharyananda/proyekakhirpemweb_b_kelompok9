@@ -19,7 +19,7 @@ $totalPengguna = $stmtPengguna->fetch()['total'];
 $stmtUMKM = $pdo->query("SELECT COUNT(*) AS total FROM toko");
 $totalUMKM = $stmtUMKM->fetch()['total'];
 
-$stmtTayang = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'disetujui'");
+$stmtTayang = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'tayang'");
 $totalTayang = $stmtTayang->fetch()['total'];
 
 $stmtMenunggu = $pdo->query("SELECT COUNT(*) AS total FROM produk WHERE status = 'pending'");
