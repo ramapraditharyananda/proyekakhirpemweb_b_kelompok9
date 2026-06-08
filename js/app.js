@@ -386,3 +386,230 @@ function doLogin() {
 
   document.getElementById('loginForm').submit();
 }
+
+function doRegister() {
+  var nama = document.getElementById('nama') ? document.getElementById('nama').value.trim() : '';
+  var email = document.getElementById('email').value.trim();
+  var pass = document.getElementById('password').value;
+  var konfirm = document.getElementById('konfirmasi') ? document.getElementById('konfirmasi').value : '';
+  var terms = document.getElementById('terms') ? document.getElementById('terms').checked : true;
+  var notif = document.getElementById('notifMsg');
+
+  if (notif) {
+    notif.style.display = 'none';
+    notif.textContent = '';
+  }
+
+  if (!nama) {
+    if (notif) {
+      notif.textContent = 'Nama lengkap wajib diisi.';
+      notif.style.display = 'block';
+    }
+    document.getElementById('nama') && document.getElementById('nama').focus();
+    return;
+  }
+
+  if (!email) {
+    if (notif) {
+      notif.textContent = 'Email wajib diisi.';
+      notif.style.display = 'block';
+    }
+    document.getElementById('email').focus();
+    return;
+  }
+
+  if (!pass) {
+    if (notif) {
+      notif.textContent = 'Password wajib diisi.';
+      notif.style.display = 'block';
+    }
+    document.getElementById('password').focus();
+    return;
+  }
+
+  if (pass.length < 8) {
+    if (notif) {
+      notif.textContent = 'Password minimal 8 karakter.';
+      notif.style.display = 'block';
+    }
+    document.getElementById('password').focus();
+    return;
+  }
+
+  if (!konfirm) {
+    if (notif) {
+      notif.textContent = 'Konfirmasi password wajib diisi.';
+      notif.style.display = 'block';
+    }
+    document.getElementById('konfirmasi') && document.getElementById('konfirmasi').focus();
+    return;
+  }
+
+  if (pass !== konfirm) {
+    if (notif) {
+      notif.textContent = 'Password dan konfirmasi password tidak cocok.';
+      notif.style.display = 'block';
+    }
+    document.getElementById('konfirmasi') && document.getElementById('konfirmasi').focus();
+    return;
+  }
+
+  if (!terms) {
+    if (notif) {
+      notif.textContent = 'Setujui syarat & ketentuan terlebih dahulu.';
+      notif.style.display = 'block';
+    }
+    return;
+  }
+
+  if (!selectedRole) {
+    if (notif) {
+      notif.textContent = 'Pilih peran terlebih dahulu (Pengunjung atau Pemilik UMKM).';
+      notif.style.display = 'block';
+    }
+    return;
+  }
+
+  document.getElementById('registerForm').submit();
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var errorMsg = params.get('error');
+  var successMsg = params.get('success');
+  var notifEl = document.getElementById('notifMsg');
+
+  if (notifEl) {
+    if (errorMsg) {
+      notifEl.textContent = errorMsg;
+      notifEl.style.color = 'red';
+      notifEl.style.display = 'block';
+    }
+
+    if (successMsg) {
+      notifEl.textContent = successMsg;
+      notifEl.style.color = 'green';
+      notifEl.style.display = 'block';
+    }
+  }
+})();
+
+var statusPillKartu = {
+  tayang: '<span class="adm-pill adm-pill-acc" style="font-size:10px;">Tayang</span>',
+  menunggu: '<span class="adm-pill adm-pill-pending" style="font-size:10px;">Menunggu</span>',
+  ditolak: '<span class="adm-pill adm-pill-tolak" style="font-size:10px;">Ditolak</span>'
+};
+
+var statusPillModal = {
+  tayang: '<span class="adm-pill adm-pill-acc">Tayang</span>',
+  menunggu: '<span class="adm-pill adm-pill-pending">Menunggu Persetujuan</span>',
+  ditolak: '<span class="adm-pill adm-pill-tolak">Ditolak</span>'
+};
+
+function formatRupiah(angka) {
+  return 'Rp ' + parseInt(angka || 0).toLocaleString('id-ID');
+}
+
+function renderProduk() {
+  var grid = document.getElementById('gridProduk');
+
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  if (!dataProduk || dataProduk.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-light);font-size:14px;">Belum ada produk. Silakan tambah produk baru.</p>';
+    return;
+  }
+
+  dataProduk.forEach(function(p, i) {
+    var card = document.createElement('div');
+    card.className = 'adm-card';
+    card.style.cursor = 'pointer';
+    card.onclick = (function(idx) {
+      return function() {
+        bukaDetail(idx);
+      };
+    })(i);
+
+    var fotoSrc = p.foto ? '../../../images/' + p.foto : '../../../images/placeholder.jpg';
+
+    card.innerHTML =
+      '<img src="' + fotoSrc + '" alt="' + p.nama + '">' +
+      '<div class="adm-overlay">' +
+        '<div class="adm-cat-label">' + (p.nama_kategori || '-') + '</div>' +
+        '<div class="adm-card-bottom">' +
+          '<div>' +
+            '<h3>' + p.nama + '</h3>' +
+            '<div style="color:rgba(255,255,255,0.6);font-size:11px;">' + formatRupiah(p.harga) + '</div>' +
+          '</div>' +
+          '<div class="adm-card-actions">' +
+            (statusPillKartu[p.status] || '') +
+            '<span style="color:rgba(255,255,255,0.55);font-size:10px;margin-top:3px;">🔍 Lihat Detail</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    grid.appendChild(card);
+  });
+}
+
+var indexAktif = -1;
+
+function bukaDetail(i) {
+  indexAktif = i;
+
+  var p = dataProduk[i];
+  var fotoSrc = p.foto ? '../../../images/' + p.foto : '../../../images/placeholder.jpg';
+
+  document.getElementById('modalNama').textContent = p.nama;
+  document.getElementById('modalKategori').textContent = p.nama_kategori || '-';
+  document.getElementById('modalHarga').textContent = formatRupiah(p.harga);
+  document.getElementById('modalDeskripsi').textContent = p.deskripsi;
+  document.getElementById('modalStatusTayang').innerHTML = statusPillModal[p.status] || p.status;
+  document.getElementById('modalGambar').src = fotoSrc;
+  document.getElementById('modalGambar').alt = p.nama;
+
+  var toggle = document.getElementById('toggleStok');
+
+  toggle.checked = (p.status === 'tayang' || p.status === 'tersedia');
+  document.getElementById('labelStok').textContent = toggle.checked ? 'Tersedia' : 'Stok Habis';
+  document.getElementById('modalDetail').classList.add('show');
+}
+
+function ubahStatusStok(checkbox) {
+  document.getElementById('labelStok').textContent = checkbox.checked ? 'Tersedia' : 'Stok Habis';
+}
+
+function simpanStatusStok() {
+  if (indexAktif < 0) return;
+
+  var tersedia = document.getElementById('toggleStok').checked;
+  var p = dataProduk[indexAktif];
+  var stokBaru = tersedia ? 'tersedia' : 'habis';
+  var form = document.createElement('form');
+
+  form.method = 'POST';
+  form.action = 'dashboard-pemilik.php';
+
+  var inputAksi = document.createElement('input');
+  inputAksi.type = 'hidden';
+  inputAksi.name = 'aksi';
+  inputAksi.value = 'ubah_stok';
+
+  var inputId = document.createElement('input');
+  inputId.type = 'hidden';
+  inputId.name = 'id_produk';
+  inputId.value = p.id;
+
+  var inputStok = document.createElement('input');
+  inputStok.type = 'hidden';
+  inputStok.name = 'stok';
+  inputStok.value = stokBaru;
+
+  form.appendChild(inputAksi);
+  form.appendChild(inputId);
+  form.appendChild(inputStok);
+  document.body.appendChild(form);
+  form.submit();
+}
