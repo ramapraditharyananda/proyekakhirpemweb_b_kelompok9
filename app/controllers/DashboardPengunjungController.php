@@ -29,12 +29,16 @@ $pesanTipe = '';
 function buatFotoUrl($foto)
 {
     $foto = trim($foto ?? '');
+    $default = '../../images/UMKMify_Logo_Color.png';
 
     if ($foto !== '') {
-        return '/umkmify/images/' . $foto;
+        $path = __DIR__ . '/../../images/' . $foto;
+        if (is_file($path)) {
+            return '../../images/' . rawurlencode($foto);
+        }
     }
 
-    return '/umkmify/images/UMKMify_Logo_Color.png';
+    return $default;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi']) && $_POST['aksi'] === 'edit_profil') {
