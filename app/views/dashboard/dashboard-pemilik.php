@@ -121,7 +121,7 @@
               <td><?= htmlspecialchars($p['nama_kategori'] ?? '-') ?></td>
               <td>Rp <?= number_format($p['harga'], 0, ',', '.') ?></td>
               <td>
-                <?php $stok = $p['stok'] ?? 'tersedia'; ?>
+                <?php $stok = $p['ketersediaan'] ?? 'tersedia'; ?>
                 <span class="adm-pill <?= $stok === 'tersedia' ? 'adm-pill-acc' : 'adm-pill-tolak' ?>">
                   <?= $stok === 'tersedia' ? 'Tersedia' : 'Habis' ?>
                 </span>
@@ -129,7 +129,7 @@
               <td>
                 <?php
                 $st = $p['status'];
-                if ($st === 'disetujui' || $st === 'tayang') echo '<span class="adm-pill adm-pill-acc">Tayang</span>';
+                if ($st === 'tayang') echo '<span class="adm-pill adm-pill-acc">Tayang</span>';
                 elseif ($st === 'pending') echo '<span class="adm-pill adm-pill-pending">Menunggu</span>';
                 elseif ($st === 'ditolak') echo '<span class="adm-pill adm-pill-tolak">Ditolak</span>';
                 else echo '<span class="adm-pill">' . htmlspecialchars($st) . '</span>';
