@@ -191,10 +191,10 @@
         <hr class="modal-detail-divider">
         <div class="modal-actions">
           <a class="btn-wa" id="mdWaLink" href="#" target="_blank">
-            <span>💬</span> Hubungi via WhatsApp
+            <span></span> Hubungi via WhatsApp
           </a>
           <button class="btn-wishlist-modal" id="mdWishlistBtn" onclick="toggleWishlistFromModal()">
-            <span id="mdWishlistIcon">🤍</span> Simpan
+            <span></span> Simpan
           </button>
         </div>
       </div>
@@ -282,15 +282,15 @@
         <div class="umkm-produk-list" id="muProdukList"></div>
       </div>
       <div class="modal-umkm-actions">
-        <button class="btn-contact-umkm" id="muWaBtn" onclick="hubungiUMKM()">💬 Hubungi Toko</button>
-        <button class="btn-laporkan-umkm" onclick="openReportFromUmkm()">🚩 Laporkan</button>
+        <button class="btn-contact-umkm" id="muWaBtn" onclick="hubungiUMKM()">Hubungi Toko</button>
+        <button class="btn-laporkan-umkm" onclick="openReportFromUmkm()">Laporkan</button>
       </div>
     </div>
   </div>
 
   <div class="wishlist-panel" id="wishlistPanel">
     <div class="wishlist-header">
-      <div class="wishlist-title">❤️ Wishlist Saya</div>
+      <div class="wishlist-title">Wishlist Saya</div>
       <button class="wishlist-close" onclick="toggleWishlist()">✕</button>
     </div>
     <div class="wishlist-body" id="wishlistBody">
@@ -342,7 +342,7 @@
         </div>
         <div class="profil-actions">
           <button type="button" class="btn-profil-cancel" onclick="closeModal('modalProfil')">Batal</button>
-          <button type="submit" class="btn-profil-save">💾 Simpan Perubahan</button>
+          <button type="submit" class="btn-profil-save">Simpan Perubahan</button>
         </div>
       </form>
     </div>
