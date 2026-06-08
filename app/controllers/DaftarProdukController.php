@@ -43,14 +43,14 @@ $stmtKat = $pdo->query("SELECT nama FROM kategori ORDER BY nama ASC");
 $kategoriList = $stmtKat->fetchAll();
 
 function statusPill($status) {
-    if ($status === 'disetujui') return '<span class="adm-pill adm-pill-acc">Tayang</span>';
+    if ($status === 'tayang') return '<span class="adm-pill adm-pill-acc">Tayang</span>';
     if ($status === 'pending')   return '<span class="adm-pill adm-pill-pending">Menunggu ACC</span>';
     if ($status === 'ditolak')   return '<span class="adm-pill adm-pill-tolak">Ditolak</span>';
     return '<span class="adm-pill">' . htmlspecialchars($status) . '</span>';
 }
 
 function statusLabel($status) {
-    if ($status === 'disetujui') return 'Tayang';
+    if ($status === 'tayang') return 'Tayang';
     if ($status === 'pending')   return 'Menunggu ACC';
     if ($status === 'ditolak')   return 'Ditolak';
     return $status;
