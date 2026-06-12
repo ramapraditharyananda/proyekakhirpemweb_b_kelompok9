@@ -2772,3 +2772,36 @@ body.body-admin {
     height: 180px;
   }
 }
+
+@media (max-width: 768px) {
+  .adm-layout { flex-direction: column; }
+  .adm-sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #e4e2f4; flex-direction: row; flex-wrap: wrap; padding: 16px; }
+  .adm-menu { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+  .adm-nav-link { padding: 8px 12px; font-size: 12px; }
+  .adm-main { padding: 16px; }
+  .adm-stats { flex-direction: column; }
+  .adm-grid { grid-template-columns: 1fr 1fr; }
+  .adm-table-wrap { overflow-x: auto; }
+  .prd-form-grid { grid-template-columns: 1fr; }
+  .profil-grid { grid-template-columns: 1fr; }
+  .quick-actions { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 22px; }
+  .hero-search { flex-direction: column; }
+  .produk-grid { grid-template-columns: 1fr 1fr; }
+  .produk-baru-scroll { grid-template-columns: 1fr 1fr; }
+  .umkm-grid { grid-template-columns: 1fr; }
+  .filter-bar { flex-direction: column; align-items: flex-start; }
+  .filter-bar-right { width: 100%; }
+  .modal-detail { flex-direction: column; max-height: 90vh; overflow-y: auto; }
+  .modal-detail-img { width: 100%; height: 200px; }
+  .nav { padding: 0 12px; height: auto; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+}
+
+@media (max-width: 480px) {
+  .adm-grid { grid-template-columns: 1fr; }
+  .produk-grid { grid-template-columns: 1fr; }
+  .produk-baru-scroll { grid-template-columns: 1fr; }
+  .quick-actions { grid-template-columns: 1fr; }
+  .card-body { padding: 20px; }
+  .card-header { padding: 24px 20px; }
+}
